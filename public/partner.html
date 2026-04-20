@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Become a Partner — Raylane Express</title>
+<link rel="icon" href="/logo.png" type="image/png"/>
+<link rel="stylesheet" href="/styles.css"/>
+<style>
+body{padding-top:62px;background:var(--off-white)}
+.partner-hero{background:linear-gradient(135deg,var(--navy) 0%,#0d4daa 100%);padding:80px 20px;text-align:center;position:relative;overflow:hidden}
+.partner-hero::before{content:'';position:absolute;right:-100px;top:-100px;width:400px;height:400px;background:rgba(255,199,44,.05);border-radius:50%}
+.partner-hero h1{color:#fff;margin-bottom:14px}
+.partner-hero p{color:rgba(255,255,255,.7);max-width:580px;margin:0 auto 32px;font-size:16px;line-height:1.7}
+.revenue-calc{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:24px;max-width:560px;margin:0 auto 32px}
+.rc-title{color:rgba(255,255,255,.7);font-size:13px;margin-bottom:16px}
+.rc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;text-align:center}
+.rc-num{font-size:26px;font-weight:800;font-family:var(--font-display);color:var(--gold)}
+.rc-label{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px}
+.tabs-section{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:62px;z-index:100}
+.tabs-inner{max-width:1100px;margin:0 auto;display:flex;padding:0 20px}
+.ptab{padding:14px 20px;font-size:13px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;color:var(--muted);transition:all .2s;font-family:var(--font-display);border:none;background:none}
+.ptab:hover{color:var(--blue)}
+.ptab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.section-wrap{max-width:1100px;margin:0 auto;padding:48px 20px}
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-bottom:40px}
+.plan-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:24px;position:relative;transition:all .2s}
+.plan-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(11,61,145,.12)}
+.plan-featured{border-color:var(--blue);box-shadow:0 0 0 3px rgba(11,61,145,.1)}
+.plan-badge{position:absolute;top:16px;right:16px;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--radius);text-transform:uppercase}
+.plan-name{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:7px}
+.plan-price{font-size:30px;font-weight:800;font-family:var(--font-display);margin-bottom:4px}
+.plan-price span{font-size:13px;font-weight:400;color:var(--muted)}
+.plan-comm{font-size:13px;margin-bottom:14px}
+.plan-feats{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.plan-feat{font-size:12px;display:flex;gap:7px}
+.plan-feat::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px}
+.how-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:22px;text-align:center}
+.how-num{width:40px;height:40px;background:var(--navy);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--gold);margin:0 auto 14px}
+.faq-item{border-bottom:1px solid var(--border);padding:16px 0}
+.faq-q{font-size:14px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-a{font-size:13px;color:var(--muted);line-height:1.7;margin-top:10px;display:none}
+.faq-a.open{display:block}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="/logo.png" alt="Raylane Express" style="height:38px;width:auto" onerror="this.style.display='none'"/><div class="nav-logo-text">RAYLANE EXPRESS<small>Uganda's Coach Network</small></div></a>
+    <div class="nav-links"><a href="/">Home</a><a href="/book">Book Travel</a><a href="/track">Track</a><a href="/parcels">Parcels</a><a href="/partner" class="active">Partners</a><a href="/admin" class="nav-cta-btn">Admin →</a></div>
+    <button class="hamburger" onclick="toggleMobMenu()">☰</button>
+  </div>
+</nav>
+<div class="mob-menu" id="mob-menu" style="display:none"><a href="/">🏠 Home</a><a href="/book">🎫 Book</a><a href="/parcels">📦 Parcels</a><a href="/partner">🤝 Partners</a><a href="/admin" class="mob-cta">Admin →</a></div>
+<div class="toast" id="rl-toast"></div>
+
+<div class="partner-hero">
+  <div style="position:relative;z-index:1">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,199,44,.8);margin-bottom:12px">For Transport Operators</div>
+    <h1>Grow Your Business with Raylane</h1>
+    <p>Join Uganda's most advanced coach management platform. Reach thousands of daily passengers. Manage bookings, fleet, compliance, payroll, and full GAAP financials — from one dashboard.</p>
+    <div class="revenue-calc">
+      <div class="rc-title">📊 Estimated monthly earnings for a 5-vehicle operator on Standard plan:</div>
+      <div class="rc-grid">
+        <div><div class="rc-num">UGX 12M</div><div class="rc-label">Monthly Gross</div></div>
+        <div><div class="rc-num">UGX 960K</div><div class="rc-label">Platform Commission</div></div>
+        <div><div class="rc-num">UGX 11M</div><div class="rc-label">Net to Operator</div></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="#apply" class="btn btn-gold btn-lg" onclick="showTab('apply')">Apply Now — It's Free →</a>
+      <a href="/operator" class="btn btn-ghost">View Demo Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Tab bar -->
+<div class="tabs-section">
+  <div class="tabs-inner">
+    <button class="ptab active" id="tab-plans" onclick="showTab('plans')">Subscription Plans</button>
+    <button class="ptab" id="tab-how" onclick="showTab('how')">How It Works</button>
+    <button class="ptab" id="tab-faq" onclick="showTab('faq')">FAQ</button>
+    <button class="ptab" id="tab-apply" onclick="showTab('apply')">Apply Now ✨</button>
+  </div>
+</div>
+
+<!-- PLANS -->
+<div id="pane-plans" class="section-wrap">
+  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px">Simple Pricing</div>
+  <h2 style="margin-bottom:8px">Transparent Plans. No Surprises.</h2>
+  <p style="color:var(--muted);font-size:15px;max-width:560px;margin-bottom:36px">Start free. Upgrade as you grow. Commission rate decreases as your plan tier increases.</p>
+  <div class="plan-grid">
+    <div class="plan-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">Free <span>to join</span></div>
+      <div class="plan-comm" style="color:var(--muted)">8% commission on bookings</div>
+      <div class="plan-feats">
+        <div class="plan-feat">Seat &amp; Parcel Booking</div>
+        <div class="plan-feat">Interactive Seat Map Manager</div>
+        <div class="plan-feat">Booking Notifications (SMS)</div>
+        <div class="plan-feat">Weekly Payout Settlement</div>
+        <div class="plan-feat">Passenger QR Ticket System</div>
+      </div>
+      <button class="btn btn-outline btn-full" onclick="showTab('apply')">Get Started Free →</button>
+    </div>
+    <div class="plan-card plan-featured">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-name">Standard</div>
+      <div class="plan-price">200K <span>UGX/month</span></div>
+      <div class="plan-comm" style="color:var(--muted)">8% commission on bookings</div>
+      <div class="plan-feats">
+        <div class="plan-feat">All Starter features</div>
+        <div class="plan-feat">Full Payments Tracking</div>
+        <div class="plan-feat">Cost Centre by Category</div>
+        <div class="plan-feat">Vendor Management</div>
+        <div class="plan-feat">Subscription Tracker</div>
+        <div class="plan-feat">Invoice Management</div>
+      </div>
+      <button class="btn btn-blue btn-full" onclick="showTab('apply')">Apply Now →</button>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Professional</div>
+      <div class="plan-price">450K <span>UGX/month</span></div>
+      <div class="plan-comm" style="color:var(--green);font-weight:700">Reduced 6% commission</div>
+      <div class="plan-feats">
+        <div class="plan-feat">All Standard features</div>
+        <div class="plan-feat">Driver Management + NID Tracking</div>
+        <div class="plan-feat">Fleet Compliance Alerts</div>
+        <div class="plan-feat">Full P&amp;L Financial Statements</div>
+        <div class="plan-feat">Fuel Log per Trip</div>
+        <div class="plan-feat">Insurance Expiry Monitoring</div>
+      </div>
+      <button class="btn btn-outline btn-full" onclick="showTab('apply')">Apply Now →</button>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">900K <span>UGX/month</span></div>
+      <div class="plan-comm" style="color:var(--green);font-weight:700">Best rate — 5% commission</div>
+      <div class="plan-feats">
+        <div class="plan-feat">All Professional features</div>
+        <div class="plan-feat">Staff / HR &amp; Payroll (PAYE + NSSF)</div>
+        <div class="plan-feat">Motor Third-Party Insurance Portal</div>
+        <div class="plan-feat">Analytics Dashboard</div>
+        <div class="plan-feat">QuickBooks IIF Export</div>
+        <div class="plan-feat">API Webhooks</div>
+        <div class="plan-feat">Dedicated Account Manager</div>
+      </div>
+      <button class="btn btn-outline btn-full" onclick="showTab('apply')">Contact Sales →</button>
+    </div>
+  </div>
+  <div style="background:var(--surface);border-radius:16px;padding:24px">
+    <div style="font-size:15px;font-weight:700;margin-bottom:12px">Module Add-Ons (Any Plan)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
+      <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px"><div style="font-size:13px;font-weight:600;margin-bottom:2px">📊 Analytics</div><div style="font-size:12px;color:var(--muted)">UGX 100,000 / month</div></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px"><div style="font-size:13px;font-weight:600;margin-bottom:2px">⛽ Fuel Management</div><div style="font-size:12px;color:var(--muted)">UGX 80,000 / month</div></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px"><div style="font-size:13px;font-weight:600;margin-bottom:2px">👥 Staff / HR</div><div style="font-size:12px;color:var(--muted)">UGX 100,000 / month</div></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px"><div style="font-size:13px;font-weight:600;margin-bottom:2px">🚌 Fleet Management</div><div style="font-size:12px;color:var(--muted)">UGX 120,000 / month</div></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px"><div style="font-size:13px;font-weight:600;margin-bottom:2px">💰 Financial Module</div><div style="font-size:12px;color:var(--muted)">UGX 100,000 / month</div></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px"><div style="font-size:13px;font-weight:600;margin-bottom:2px">🏢 Cost Centre</div><div style="font-size:12px;color:var(--muted)">UGX 80,000 / month</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div id="pane-how" class="section-wrap hidden">
+  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px">The Process</div>
+  <h2 style="margin-bottom:36px">From Application to First Payout</h2>
+  <div class="how-grid">
+    <div class="how-card"><div class="how-num">01</div><div style="font-size:15px;font-weight:700;margin-bottom:7px">Apply Online</div><p style="font-size:13px;color:var(--muted)">Fill in the application form with your company details, fleet size, routes, and chosen plan. Takes 5 minutes.</p></div>
+    <div class="how-card"><div class="how-num">02</div><div style="font-size:15px;font-weight:700;margin-bottom:7px">Admin Review</div><p style="font-size:13px;color:var(--muted)">Our team reviews your application within 24 hours on business days. We verify your TIN, PSV licence, and fleet details.</p></div>
+    <div class="how-card"><div class="how-num">03</div><div style="font-size:15px;font-weight:700;margin-bottom:7px">Account Created</div><p style="font-size:13px;color:var(--muted)">On approval, we create your operator account and configure your modules. You receive login credentials via SMS.</p></div>
+    <div class="how-card"><div class="how-num">04</div><div style="font-size:15px;font-weight:700;margin-bottom:7px">Submit Your First Trip</div><p style="font-size:13px;color:var(--muted)">Enter your trip in the Operator Dashboard. Admin approves it and it immediately appears live on the Raylane public website.</p></div>
+    <div class="how-card"><div class="how-num">05</div><div style="font-size:15px;font-weight:700;margin-bottom:7px">Passengers Book</div><p style="font-size:13px;color:var(--muted)">Passengers find your coach on raylaneexpress.com, select seats, and pay via MTN MoMo, Airtel, or card.</p></div>
+    <div class="how-card"><div class="how-num">06</div><div style="font-size:15px;font-weight:700;margin-bottom:7px">Weekly Payout</div><p style="font-size:13px;color:var(--muted)">Every week, Raylane settles your net earnings (gross minus commission) direct to your MTN MoMo merchant account.</p></div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div id="pane-faq" class="section-wrap hidden">
+  <h2 style="margin-bottom:28px">Frequently Asked Questions</h2>
+  <div style="max-width:680px">
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How long does approval take? <span>+</span></div><div class="faq-a">Most applications are reviewed within 24 hours on weekdays. We will confirm via SMS. Once approved, your dashboard is ready within 2 hours.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What documents do I need to apply? <span>+</span></div><div class="faq-a">You need: Uganda Revenue Authority TIN number, PSV Operator Licence, at least one vehicle registration, at least one PSV-licensed driver, and an MTN MoMo merchant code for payouts.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">When do I receive my payouts? <span>+</span></div><div class="faq-a">Payouts are processed weekly every Friday for the previous week's confirmed and completed bookings. Net amount (gross minus commission) is transferred to your MTN MoMo merchant account. You receive an SMS receipt.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I run my own buses and still join? <span>+</span></div><div class="faq-a">Absolutely. Raylane works with both private operators and manages its own internal fleet. Your vehicles are managed entirely through your Operator Dashboard. Raylane's own fleet is managed separately by Admin.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I upgrade my plan later? <span>+</span></div><div class="faq-a">Yes. You can upgrade your plan at any time from your Dashboard Settings tab. Admin activates the new modules within 24 hours of payment confirmation. You can also add individual modules without upgrading your full plan.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How does parcel revenue work for operators? <span>+</span></div><div class="faq-a">When a passenger sends a parcel on your bus, you earn the parcel fee minus Raylane's 8% commission. This is automatically calculated and included in your weekly payout. At scale, this can add UGX 2–5M per month in additional revenue.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What happens if a passenger cancels? <span>+</span></div><div class="faq-a">Standard bookings cancelled more than 6 hours before departure receive an 80% refund. The 20% handling fee is shared between Raylane and the operator. Advance bookings cancelled 48+ hours before departure receive a full refund of the commitment fee.</div></div>
+  </div>
+</div>
+
+<!-- APPLY FORM -->
+<div id="pane-apply" class="section-wrap hidden">
+  <div id="apply" style="max-width:660px;margin:0 auto">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:8px">Partner Application</div>
+    <h2 style="margin-bottom:6px">Apply to Join Raylane Express</h2>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:28px">Our team reviews all applications within 24 hours on business days. You will be notified via SMS.</p>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:20px;padding:28px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:18px">Company Information</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Company / Business Name</label><input class="form-input" type="text" placeholder="e.g. Nile Express Limited"/></div>
+        <div class="form-group"><label class="form-label">Contact Person (Owner/Manager)</label><input class="form-input" type="text" placeholder="Full name"/></div>
+        <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" id="apply-phone" type="tel" placeholder="0771 234 567"/></div>
+        <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" placeholder="info@yourcompany.ug"/></div>
+        <div class="form-group"><label class="form-label">URA TIN Number</label><input class="form-input" type="text" placeholder="e.g. 1002847319"/></div>
+        <div class="form-group"><label class="form-label">MTN MoMo Merchant Code</label><input class="form-input" type="text" placeholder="For receiving payouts"/></div>
+        <div class="form-group"><label class="form-label">Number of Vehicles</label><select class="form-input form-select"><option>1–3 vehicles</option><option>4–9 vehicles</option><option>10–20 vehicles</option><option>20+ vehicles</option></select></div>
+        <div class="form-group"><label class="form-label">Subscription Plan</label><select class="form-input form-select"><option>Starter (Free)</option><option>Standard — UGX 200,000/mo</option><option>Professional — UGX 450,000/mo</option><option>Enterprise — UGX 900,000/mo</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Main Routes You Currently Operate</label><input class="form-input" type="text" placeholder="e.g. Kampala–Mbale, Kampala–Gulu, Kampala–Arua"/></div>
+      <div class="form-group"><label class="form-label">Referred By (Optional — earn referral credits)</label><input class="form-input" type="text" placeholder="Operator name or referral code"/></div>
+      <div style="margin-bottom:18px">
+        <label style="display:flex;gap:10px;font-size:13px;cursor:pointer;align-items:flex-start">
+          <input type="checkbox" id="terms-check" style="margin-top:2px;accent-color:var(--blue)"/>
+          <span>I accept the <a href="#" style="color:var(--blue)">Raylane Express Operator Terms of Service</a>, the commission structure for my chosen plan, and confirm all business registration details are accurate.</span>
+        </label>
+      </div>
+      <button class="btn btn-gold btn-full btn-lg" onclick="submitApplication()">Submit Application →</button>
+      <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px">By applying, you agree to the Raylane Express Operator Agreement. Applications are reviewed by our team — not automated.</p>
+    </div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+<script>
+function showTab(tab){
+  ['plans','how','faq','apply'].forEach(t=>{
+    document.getElementById('pane-'+t)?.classList.toggle('hidden',t!==tab);
+    document.getElementById('tab-'+t)?.classList.toggle('active',t===tab);
+  });
+  window.scrollTo(0,120);
+}
+function toggleFaq(el){
+  const ans=el.nextElementSibling;
+  const icon=el.querySelector('span');
+  ans.classList.toggle('open');
+  icon.textContent=ans.classList.contains('open')?'−':'+';
+}
+function submitApplication(){
+  if(!document.getElementById('terms-check').checked){toast('Please accept the Terms of Service to continue.');return;}
+  const phone=document.getElementById('apply-phone').value.trim();
+  if(!phone){toast('Please enter a contact phone number.');return;}
+  toast('✅ Application submitted! Our team will contact you within 24 hours via SMS on '+phone);
+  setTimeout(()=>window.location.href='/operator',2000);
+}
+// Check if URL has #apply
+if(location.hash==='#apply')showTab('apply');
+</script>
+</body>
+</html>

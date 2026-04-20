@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="description" content="Book Uganda coach tickets online in 60 seconds. MTN MoMo, Airtel Money, or card. Kampala to Mbale, Gulu, Mbarara, Nairobi and more."/>
+<meta name="theme-color" content="#0A1628"/>
+<title>Raylane Express — Uganda's Premier Coach Network</title>
+<link rel="icon" href="/logo.png" type="image/png"/>
+<link rel="apple-touch-icon" href="/logo.png"/>
+<link rel="manifest" href="/manifest.json"/>
+<link rel="stylesheet" href="/styles.css"/>
+<style>
+/* ── HOME-SPECIFIC STYLES ── */
+.hero {
+  min-height: 100vh; background: var(--navy);
+  position: relative; display: flex; flex-direction: column;
+  justify-content: center; overflow: hidden; padding-top: 62px;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg,#0A1628 0%,#0d2d6e 55%,#0A1628 100%);
+}
+.hero-glow {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(ellipse at 15% 55%, rgba(255,199,44,.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 25%, rgba(11,61,145,.45) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 85%, rgba(255,199,44,.04) 0%, transparent 40%);
+  pointer-events: none;
+}
+.hero-content {
+  position: relative; z-index: 2; max-width: 1280px;
+  margin: 0 auto; padding: 44px 20px 24px; width: 100%;
+}
+.hero-grid { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+.hero-left { flex: 1; min-width: 280px; }
+.hero-right { flex: 1; min-width: 290px; max-width: 500px; }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,199,44,.1); border: 1px solid rgba(255,199,44,.28);
+  color: var(--gold); font-size: 11px; font-weight: 700;
+  padding: 6px 16px; border-radius: var(--radius);
+  letter-spacing: .05em; text-transform: uppercase; margin-bottom: 22px;
+}
+.hero h1 { color: #fff; margin-bottom: 18px; }
+.hero h1 em { color: var(--gold); font-style: normal; }
+.hero-sub { font-size: clamp(14px,1.8vw,17px); color: rgba(255,255,255,.65); max-width: 500px; line-height: 1.7; margin-bottom: 30px; }
+.trust-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 36px; }
+.trust-item { display: flex; align-items: center; gap: 7px; color: rgba(255,255,255,.68); font-size: 13px; }
+.trust-item strong { color: var(--gold); font-family: var(--font-display); font-weight: 800; }
+
+/* Search box */
+.search-box {
+  background: rgba(255,255,255,.98); border-radius: 22px;
+  padding: 20px; box-shadow: 0 28px 64px rgba(0,0,0,.42);
+  margin-bottom: 18px;
+}
+.search-tabs { display: flex; gap: 4px; background: var(--surface); border-radius: 13px; padding: 4px; margin-bottom: 18px; }
+.stab {
+  flex: 1; text-align: center; padding: 9px 4px; border-radius: 10px;
+  font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s;
+  border: none; background: transparent; color: var(--muted); font-family: var(--font-display);
+}
+.stab.active { background: #fff; color: var(--blue); box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+.search-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.sf-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; }
+.sf-wrap {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 10px 13px; transition: border-color .2s;
+}
+.sf-wrap:focus-within, .sf-wrap:hover { border-color: var(--blue); }
+.sf-wrap svg { width: 15px; height: 15px; fill: var(--blue); flex-shrink: 0; }
+.sf-wrap select, .sf-wrap input {
+  border: none; background: transparent; font-size: 14px; font-weight: 500;
+  color: var(--text); outline: none; width: 100%; cursor: pointer;
+  font-family: var(--font-body);
+}
+.sf-full { grid-column: 1 / -1; }
+.loc-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  color: var(--blue); font-size: 11px; font-weight: 600;
+  cursor: pointer; border: none; background: none;
+  padding: 3px 0; margin-top: 4px; font-family: var(--font-body);
+}
+.loc-btn svg { width: 13px; height: 13px; fill: var(--blue); }
+.terminal-info {
+  background: rgba(22,163,74,.08); border: 1px solid rgba(22,163,74,.2);
+  border-radius: 10px; padding: 8px 12px; font-size: 12px;
+  color: var(--green); margin-top: 8px; display: none;
+}
+.quick-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.qp {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+  color: rgba(255,255,255,.88); font-size: 12px; font-weight: 600;
+  padding: 7px 14px; border-radius: var(--radius); cursor: pointer;
+  transition: all .2s; white-space: nowrap; text-decoration: none;
+}
+.qp:hover { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
+/* Live strip */
+.live-strip { background: var(--navy); padding: 14px 0; border-top: 1px solid rgba(255,199,44,.14); }
+.live-strip-inner { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+.live-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--gold); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.dep-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.dep-scroll::-webkit-scrollbar { display: none; }
+.dep-card {
+  flex-shrink: 0; background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1); border-radius: 13px;
+  padding: 12px 16px; min-width: 178px; cursor: pointer;
+  transition: all .2s; text-decoration: none; display: block;
+}
+.dep-card:hover { background: rgba(255,199,44,.08); border-color: rgba(255,199,44,.3); }
+.dep-route { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+.dep-time { font-size: 22px; font-weight: 800; font-family: var(--font-display); color: var(--gold); line-height: 1; }
+.dep-meta { font-size: 11px; color: rgba(255,255,255,.42); margin-top: 4px; }
+.dep-status { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: var(--radius); margin-top: 6px; display: inline-block; }
+.ds-ok   { background: rgba(22,163,74,.2); color: #4ade80; }
+.ds-fast { background: rgba(217,119,6,.2); color: #fbbf24; }
+.ds-full { background: rgba(220,38,38,.2); color: #f87171; }
+
+/* Map section */
+.map-section { background: var(--navy); }
+.map-section .section-title { color: #fff; }
+.map-section .section-sub { color: rgba(255,255,255,.58); }
+.map-wrap { border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); background: rgba(0,0,0,.2); }
+.dest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px,1fr)); gap: 8px; margin-top: 20px; }
+.dest-chip {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09);
+  border-radius: 12px; padding: 10px 14px; cursor: pointer;
+  transition: all .2s; text-decoration: none;
+}
+.dest-chip:hover { background: rgba(255,199,44,.1); border-color: rgba(255,199,44,.3); }
+.dc-name { font-size: 12px; font-weight: 600; color: #fff; }
+.dc-price { font-size: 11px; color: var(--gold); font-weight: 700; }
+
+/* Services */
+.svc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px,1fr)); gap: 14px; }
+.svc-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 17px;
+  padding: 22px; text-align: center; cursor: pointer; transition: all .25s;
+  text-decoration: none; color: inherit; display: block;
+}
+.svc-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(11,61,145,.13); border-color: var(--blue); }
+.svc-icon { width: 54px; height: 54px; background: var(--surface); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 26px; transition: background .2s; }
+.svc-card:hover .svc-icon { background: var(--navy); }
+.svc-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; font-family: var(--font-display); }
+.svc-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* Payment */
+.pay-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.pay-card { display: flex; align-items: center; gap: 9px; background: #fff; border: 1.5px solid var(--border); border-radius: 12px; padding: 10px 16px; font-size: 13px; font-weight: 600; }
+.pdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.momo { background: #FFCC00; } .airtel { background: #E4002B; } .visa { background: #1434CB; } .mpesa { background: #00A651; }
+
+/* Operator banner */
+.op-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, #0e3d8c 100%);
+  border-radius: 24px; padding: 48px 40px;
+  display: flex; flex-wrap: wrap; gap: 32px;
+  align-items: center; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.op-banner::before { content: ''; position: absolute; right: -60px; top: -60px; width: 260px; height: 260px; background: rgba(255,199,44,.05); border-radius: 50%; }
+.op-banner::after  { content: ''; position: absolute; left: -40px; bottom: -40px; width: 180px; height: 180px; background: rgba(255,199,44,.03); border-radius: 50%; }
+.op-banner-text { position: relative; z-index: 1; }
+.op-banner-text h2 { color: #fff; margin-bottom: 10px; }
+.op-banner-text p { color: rgba(255,255,255,.68); max-width: 480px; line-height: 1.7; font-size: 15px; }
+.op-banner-btns { display: flex; gap: 10px; flex-wrap: wrap; position: relative; z-index: 1; }
+
+/* Loyalty */
+.loyalty-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.tier-card { border-radius: 18px; padding: 24px; overflow: hidden; }
+.t-bronze { background: linear-gradient(135deg,#7c2d12,#9a3412); }
+.t-silver { background: linear-gradient(135deg,#374151,#1f2937); }
+.t-gold   { background: linear-gradient(135deg,#78350f,var(--navy)); }
+.tier-card h3 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 3px; }
+.tier-pts { font-size: 12px; color: rgba(255,255,255,.55); margin-bottom: 16px; }
+.tier-perk { font-size: 12px; color: rgba(255,255,255,.84); margin-bottom: 6px; display: flex; gap: 7px; }
+.tier-perk::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+/* Testimonials */
+.testimonials-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap: 14px; }
+.tcard { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+.tcard-stars { color: var(--gold); font-size: 13px; margin-bottom: 10px; }
+.tcard-quote { font-size: 13px; color: var(--text); line-height: 1.7; margin-bottom: 14px; font-style: italic; }
+.tcard-author { display: flex; align-items: center; gap: 10px; }
+.tcard-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--gold); font-family: var(--font-display); flex-shrink: 0; }
+
+/* Footer */
+footer { background: var(--navy); color: rgba(255,255,255,.65); padding: 52px 20px 24px; }
+.footer-grid { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 36px; }
+.footer-brand p { font-size: 13px; line-height: 1.75; max-width: 240px; margin-top: 12px; }
+.footer-col h4 { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+.footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,.52); text-decoration: none; margin-bottom: 8px; cursor: pointer; transition: color .2s; }
+.footer-col a:hover { color: var(--gold); }
+.footer-bottom { max-width: 1280px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,.09); padding-top: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 12px; color: rgba(255,255,255,.35); }
+.footer-bottom a { color: rgba(255,255,255,.35); text-decoration: none; cursor: pointer; }
+
+/* Steps */
+.steps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px,1fr)); gap: 18px; }
+.step-card { background: #fff; border: 1px solid var(--border); border-radius: 17px; padding: 22px; position: relative; overflow: hidden; }
+.step-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gold); }
+.step-num { width: 38px; height: 38px; background: var(--navy); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 15px; color: var(--gold); margin-bottom: 14px; }
+.step-title { font-size: 15px; font-weight: 700; margin-bottom: 7px; }
+.step-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+@media(max-width:900px) { .search-fields { grid-template-columns: 1fr; } .sf-full { grid-column: 1; } .op-banner { padding: 28px 22px; } .loyalty-grid { grid-template-columns: 1fr; } .footer-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width:600px) { .steps-grid { grid-template-columns: 1fr; } .svc-grid { grid-template-columns: repeat(2,1fr); } .hero-right { max-width: 100%; } }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="rl-toast"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="/logo.png" alt="Raylane Express" style="height:40px;width:auto" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="nav-logo-fallback" style="display:none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#0A1628"><path d="M4 17l2-8h12l2 8H4zm1-2h14l-1.5-6H6.5L5 15zM3 19h18v2H3v-2zm6-9h6V8H9v2z"/></svg>
+      </div>
+      <div class="nav-logo-text">RAYLANE EXPRESS<small>Uganda's Coach Network</small></div>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="active">Home</a>
+      <a href="/book">Book Travel</a>
+      <a href="/track">Track Coach</a>
+      <a href="/parcels">Parcels</a>
+      <a href="/partner">Partners</a>
+      <a href="/account">Account</a>
+      <a href="/admin" class="nav-cta-btn">Admin Console →</a>
+    </div>
+    <div class="nav-actions">
+      <button class="icon-btn" onclick="window.location='/account'" title="Account">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg>
+      </button>
+      <button class="hamburger" onclick="toggleMobMenu()" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mob-menu" id="mob-menu" style="display:none">
+  <a href="/">🏠 Home</a>
+  <a href="/book">🎫 Book Travel</a>
+  <a href="/track">📍 Track My Coach</a>
+  <a href="/parcels">📦 Send Parcels</a>
+  <a href="/partner">🤝 Become a Partner</a>
+  <a href="/account">👤 My Account</a>
+  <a href="/admin" class="mob-cta">Admin Console →</a>
+  <a href="/operator/demo" class="mob-cta" style="margin-top:4px">Operator Dashboard →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="hero-badge">
+          <span class="live-dot"></span> Live Seat Availability
+        </div>
+        <h1>Uganda's <em>Smartest</em><br/>Coach Network</h1>
+        <p class="hero-sub">Book any seat across Uganda, Rwanda, and Kenya in under 60 seconds. Pay with MTN MoMo, Airtel Money, or card. No account required — ever.</p>
+        <div class="trust-row">
+          <div class="trust-item"><strong>500K+</strong> Passengers Served</div>
+          <div class="trust-item"><strong>150+</strong> Active Operators</div>
+          <div class="trust-item"><strong>99.9%</strong> On-Time Rate</div>
+          <div class="trust-item"><strong>60s</strong> Booking Time</div>
+        </div>
+        <div class="quick-pills">
+          <a href="/book" class="qp">🎫 Book Now</a>
+          <a href="/parcels" class="qp">📦 Send Parcel</a>
+          <a href="/track" class="qp">📍 Track Coach</a>
+          <a href="#" class="qp" onclick="openModal('group-modal')">👥 Group Booking</a>
+          <a href="/book?type=advance" class="qp">📅 Advance Book</a>
+        </div>
+      </div>
+
+      <!-- SEARCH BOX -->
+      <div class="hero-right">
+        <div class="search-box">
+          <div class="search-tabs">
+            <button class="stab active" onclick="setSearchTab('bus',this)">🚌 Bus Seat</button>
+            <button class="stab" onclick="setSearchTab('parcel',this)">📦 Parcel</button>
+            <button class="stab" onclick="setSearchTab('hire',this)">🚐 Private Hire</button>
+          </div>
+
+          <!-- BUS TAB -->
+          <div id="st-bus">
+            <div class="search-fields">
+              <div>
+                <div class="sf-label">Departure City</div>
+                <div class="sf-wrap">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/></svg>
+                  <select id="from-city" onchange="updateToOptions()">
+                    <option value="">Select departure</option>
+                    <option>Kampala</option><option>Entebbe</option><option>Jinja</option>
+                    <option>Mbale</option><option>Gulu</option><option>Arua</option>
+                    <option>Mbarara</option><option>Fort Portal</option><option>Kabale</option>
+                    <option>Lira</option><option>Soroti</option><option>Tororo</option>
+                    <option>Kasese</option><option>Masaka</option><option>Hoima</option>
+                    <option>Kisoro</option><option>Moroto</option><option>Kotido</option>
+                    <option>Nairobi (Kenya)</option><option>Kigali (Rwanda)</option>
+                  </select>
+                </div>
+                <button class="loc-btn" onclick="handleLocDetect()">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+                  Detect my location
+                </button>
+                <div class="terminal-info" id="terminal-info"></div>
+              </div>
+              <div>
+                <div class="sf-label">Destination</div>
+                <div class="sf-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/></svg>
+                  <select id="to-city">
+                    <option value="">Select destination</option>
+                    <option>Mbale</option><option>Gulu</option><option>Mbarara</option>
+                    <option>Fort Portal</option><option>Arua</option><option>Kabale</option>
+                    <option>Jinja</option><option>Lira</option><option>Soroti</option>
+                    <option>Tororo</option><option>Kasese</option><option>Masaka</option>
+                    <option>Hoima</option><option>Kisoro</option><option>Entebbe</option>
+                    <option>Nairobi (Kenya)</option><option>Kigali (Rwanda)</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <div class="sf-label">Departure Date</div>
+                <div class="sf-wrap">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  <input type="date" id="dep-date"/>
+                </div>
+              </div>
+              <div>
+                <div class="sf-label">Passengers</div>
+                <div class="sf-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                  <select id="pax-count">
+                    <option value="1">1 Passenger</option><option value="2">2 Passengers</option>
+                    <option value="3">3 Passengers</option><option value="4">4 Passengers</option>
+                    <option value="5">5 Passengers</option><option value="6">6+ (Group)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-gold btn-full" onclick="handleSearch()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Search Available Coaches
+            </button>
+          </div>
+
+          <!-- PARCEL TAB -->
+          <div id="st-parcel" class="hidden">
+            <div class="search-fields">
+              <div>
+                <div class="sf-label">From City</div>
+                <div class="sf-wrap"><svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/></svg><select><option>Kampala</option><option>Jinja</option><option>Mbale</option><option>Gulu</option></select></div>
+              </div>
+              <div>
+                <div class="sf-label">To City</div>
+                <div class="sf-wrap"><svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/></svg><select><option>Mbarara</option><option>Fort Portal</option><option>Lira</option><option>Arua</option><option>Kabale</option></select></div>
+              </div>
+              <div class="sf-full">
+                <div class="sf-label">Parcel Category</div>
+                <div class="sf-wrap"><svg viewBox="0 0 24 24"><path d="M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg><select><option>Envelope / Documents — UGX 5,000</option><option>Small Parcel (up to 2kg) — UGX 12,000</option><option>Large Parcel (up to 10kg) — UGX 20,000</option><option>Heavy Cargo — From UGX 30,000</option></select></div>
+              </div>
+            </div>
+            <a href="/parcels" class="btn btn-gold btn-full">Book Parcel Delivery →</a>
+          </div>
+
+          <!-- HIRE TAB -->
+          <div id="st-hire" class="hidden">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.65">Charter a full coach for weddings, school trips, corporate events, or tourist groups. We assign a dedicated vehicle and PSV-licensed driver.</p>
+            <div class="search-fields">
+              <div>
+                <div class="sf-label">Event Type</div>
+                <div class="sf-wrap"><svg viewBox="0 0 24 24"><path d="M4 17l2-8h12l2 8H4z"/></svg><select><option>Wedding / Celebration</option><option>Corporate Event</option><option>School Trip</option><option>Tourist Group</option><option>Airport Transfer</option><option>Conference</option></select></div>
+              </div>
+              <div>
+                <div class="sf-label">Group Size</div>
+                <div class="sf-wrap"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg><select><option>1–14 pax (Minivan)</option><option>15–40 pax (Midsize Coach)</option><option>41–67 pax (Full Coach)</option><option>68+ (Multiple Coaches)</option></select></div>
+              </div>
+            </div>
+            <button class="btn btn-gold btn-full" onclick="toast('Private hire quote request submitted. Our team will contact you within 2 hours.')">Request Private Hire Quote →</button>
+          </div>
+        </div>
+
+        <!-- Price calendar hint -->
+        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:13px;padding:12px 15px;display:flex;align-items:center;gap:12px">
+          <span style="font-size:20px">📅</span>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:3px">Flexible on dates? Save up to 20%</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5)">Prices vary by day on most routes. See the cheapest dates on the results page.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE DEPARTURES STRIP -->
+<div class="live-strip">
+  <div class="live-strip-inner">
+    <div class="live-label"><span class="live-dot"></span> Today's Departures — Live</div>
+    <div class="dep-scroll">
+      <a href="/book?route=kla-mbale" class="dep-card"><div class="dep-route">Kampala → Mbale</div><div class="dep-time">07:00</div><div class="dep-meta">Global Coaches · 67-Seater</div><span class="dep-status ds-ok">✓ Available</span></a>
+      <a href="/book?route=kla-gulu" class="dep-card"><div class="dep-route">Kampala → Gulu</div><div class="dep-time">07:30</div><div class="dep-meta">YY Coaches · 67-Seater</div><span class="dep-status ds-fast">⚡ Filling Fast</span></a>
+      <a href="/book?route=kla-mbarara" class="dep-card"><div class="dep-route">Kampala → Mbarara</div><div class="dep-time">08:00</div><div class="dep-meta">Link Bus · 67-Seater</div><span class="dep-status ds-ok">✓ Available</span></a>
+      <a href="/book?route=kla-kabale" class="dep-card"><div class="dep-route">Kampala → Kabale</div><div class="dep-time">08:30</div><div class="dep-meta">Raylane Express · 67-Seater</div><span class="dep-status ds-fast">⚡ Filling Fast</span></a>
+      <a href="/book?route=kla-arua" class="dep-card"><div class="dep-route">Kampala → Arua</div><div class="dep-time">09:00</div><div class="dep-meta">Fast Coaches · 67-Seater</div><span class="dep-status ds-ok">✓ Available</span></a>
+      <a href="/book?route=kla-jinja" class="dep-card"><div class="dep-route">Kampala → Jinja</div><div class="dep-time">09:30</div><div class="dep-meta">YY Coaches · 14-Seater</div><span class="dep-status ds-full">🔴 Almost Full</span></a>
+      <a href="/book?route=kla-ftportal" class="dep-card"><div class="dep-route">Kampala → Fort Portal</div><div class="dep-time">10:00</div><div class="dep-meta">Global Coaches · 67-Seater</div><span class="dep-status ds-ok">✓ Available</span></a>
+      <a href="/book?route=kla-lira" class="dep-card"><div class="dep-route">Kampala → Lira</div><div class="dep-time">10:30</div><div class="dep-meta">Nile Express · 67-Seater</div><span class="dep-status ds-ok">✓ Available</span></a>
+      <a href="/book?route=kla-nairobi" class="dep-card"><div class="dep-route">Kampala → Nairobi 🌍</div><div class="dep-time">20:00</div><div class="dep-meta">Raylane Express · International</div><span class="dep-status ds-ok">✓ Available</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- DESTINATIONS MAP -->
+<section class="section map-section">
+  <div class="section-inner">
+    <div class="section-label">Our Network</div>
+    <h2 class="section-title">Where We Connect Uganda</h2>
+    <p class="section-sub">Direct routes to 21 cities across Uganda with international corridors to Nairobi, Kenya and Kigali, Rwanda.</p>
+    <div class="map-wrap">
+      <svg viewBox="0 0 560 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;background:linear-gradient(175deg,#0d2952 0%,#0A1628 100%)">
+        <!-- Uganda Shape -->
+        <path d="M130,55 L200,38 L280,48 L360,58 L415,100 L430,170 L420,250 L440,320 L428,400 L395,445 L350,470 L285,488 L220,480 L158,460 L118,420 L92,360 L78,290 L88,220 L76,158 L98,100 Z" fill="rgba(11,61,145,0.12)" stroke="rgba(255,199,44,0.28)" stroke-width="1.5"/>
+        <!-- Lake Victoria -->
+        <ellipse cx="310" cy="475" rx="90" ry="55" fill="rgba(30,100,200,0.22)"/>
+        <text x="295" y="480" fill="rgba(100,160,255,0.45)" font-size="10" font-family="Sora">Lake Victoria</text>
+        <!-- Lake Albert -->
+        <ellipse cx="95" cy="235" rx="20" ry="58" fill="rgba(30,100,200,0.2)"/>
+        <text x="50" y="232" fill="rgba(100,160,255,0.4)" font-size="8" font-family="Sora">L. Albert</text>
+        <!-- Lake Edward -->
+        <ellipse cx="118" cy="405" rx="16" ry="32" fill="rgba(30,100,200,0.18)"/>
+        <text x="80" y="407" fill="rgba(100,160,255,0.4)" font-size="8" font-family="Sora">L. Edward</text>
+        <!-- Route lines from Kampala -->
+        <g stroke="rgba(255,199,44,0.22)" stroke-width="1.5" fill="none">
+          <line x1="228" y1="345" x2="322" y2="272" stroke-dasharray="4,3"/>
+          <line x1="228" y1="345" x2="172" y2="172" stroke-dasharray="4,3"/>
+          <line x1="228" y1="345" x2="178" y2="418" stroke-dasharray="4,3"/>
+          <line x1="228" y1="345" x2="135" y2="308" stroke-dasharray="4,3"/>
+          <line x1="228" y1="345" x2="268" y2="338" stroke-dasharray="4,3"/>
+          <line x1="228" y1="345" x2="112" y2="128" stroke-dasharray="4,3"/>
+          <line x1="228" y1="345" x2="232" y2="205" stroke-dasharray="4,3"/>
+          <line x1="228" y1="345" x2="290" y2="232" stroke-dasharray="4,3"/>
+          <line x1="178" y1="418" x2="165" y2="452" stroke-dasharray="4,3"/>
+        </g>
+        <!-- International routes (dashed) -->
+        <line x1="228" y1="345" x2="490" y2="540" stroke="rgba(255,199,44,0.15)" stroke-width="1.5" stroke-dasharray="9,5" fill="none"/>
+        <line x1="165" y1="452" x2="62" y2="540" stroke="rgba(255,199,44,0.15)" stroke-width="1.5" stroke-dasharray="9,5" fill="none"/>
+
+        <!-- HUBS (larger gold pins) -->
+        <g onclick="toast('Kampala — Hub city. Multiple daily departures to all Uganda routes.')" style="cursor:pointer">
+          <circle cx="228" cy="345" r="13" fill="rgba(255,199,44,0.18)" stroke="rgba(255,199,44,0.45)" stroke-width="1.5"/>
+          <circle cx="228" cy="345" r="7" fill="#FFC72C"/>
+          <text x="243" y="349" fill="#fff" font-size="11" font-weight="bold" font-family="Sora">Kampala</text>
+        </g>
+        <g onclick="toast('Gulu — Northern hub. Routes to Arua, Lira, South Sudan corridor.')" style="cursor:pointer">
+          <circle cx="172" cy="172" r="11" fill="rgba(255,199,44,0.15)" stroke="rgba(255,199,44,0.4)" stroke-width="1"/>
+          <circle cx="172" cy="172" r="6" fill="#FFC72C"/>
+          <text x="183" y="176" fill="#fff" font-size="10" font-weight="bold" font-family="Sora">Gulu</text>
+        </g>
+        <g onclick="toast('Mbale — Eastern hub. Gateway to Mount Elgon and Kenya border.')" style="cursor:pointer">
+          <circle cx="322" cy="272" r="11" fill="rgba(255,199,44,0.15)" stroke="rgba(255,199,44,0.4)" stroke-width="1"/>
+          <circle cx="322" cy="272" r="6" fill="#FFC72C"/>
+          <text x="333" y="276" fill="#fff" font-size="10" font-weight="bold" font-family="Sora">Mbale</text>
+        </g>
+        <g onclick="toast('Mbarara — Western hub. Routes to Fort Portal, Kabale, Rwanda.')" style="cursor:pointer">
+          <circle cx="178" cy="418" r="11" fill="rgba(255,199,44,0.15)" stroke="rgba(255,199,44,0.4)" stroke-width="1"/>
+          <circle cx="178" cy="418" r="6" fill="#FFC72C"/>
+          <text x="190" y="422" fill="#fff" font-size="10" font-weight="bold" font-family="Sora">Mbarara</text>
+        </g>
+        <g onclick="toast('Fort Portal — Western hub. Gateway to Rwenzori Mountains and Congo border.')" style="cursor:pointer">
+          <circle cx="135" cy="308" r="11" fill="rgba(255,199,44,0.15)" stroke="rgba(255,199,44,0.4)" stroke-width="1"/>
+          <circle cx="135" cy="308" r="6" fill="#FFC72C"/>
+          <text x="147" y="305" fill="#fff" font-size="9" font-weight="bold" font-family="Sora">Fort Portal</text>
+        </g>
+
+        <!-- Other cities -->
+        <g onclick="toast('Jinja — Source of the Nile. 2h from Kampala.')" style="cursor:pointer"><circle cx="268" cy="338" r="5" fill="rgba(255,255,255,0.7)"/><text x="276" y="342" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Jinja</text></g>
+        <g onclick="toast('Arua — Northwest Uganda. Near Congo &amp; South Sudan border.')" style="cursor:pointer"><circle cx="112" cy="128" r="5" fill="rgba(255,255,255,0.7)"/><text x="120" y="132" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Arua</text></g>
+        <g onclick="toast('Lira — North-central. Growing commercial hub.')" style="cursor:pointer"><circle cx="232" cy="205" r="5" fill="rgba(255,255,255,0.7)"/><text x="240" y="209" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Lira</text></g>
+        <g onclick="toast('Soroti — Eastern Uganda. Major agricultural region.')" style="cursor:pointer"><circle cx="290" cy="232" r="5" fill="rgba(255,255,255,0.7)"/><text x="298" y="236" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Soroti</text></g>
+        <g onclick="toast('Entebbe — International airport city. Lake Victoria shore.')" style="cursor:pointer"><circle cx="228" cy="368" r="5" fill="rgba(255,255,255,0.7)"/><text x="236" y="372" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Entebbe ✈</text></g>
+        <g onclick="toast('Kabale — Southwestern highlands. Gateway to Bwindi Gorilla National Park.')" style="cursor:pointer"><circle cx="165" cy="452" r="5" fill="rgba(255,255,255,0.7)"/><text x="173" y="456" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Kabale</text></g>
+        <g onclick="toast('Tororo — Eastern border town. Near Kenya border.')" style="cursor:pointer"><circle cx="348" cy="298" r="5" fill="rgba(255,255,255,0.7)"/><text x="355" y="302" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Tororo</text></g>
+        <g onclick="toast('Kasese — Gateway to Queen Elizabeth National Park.')" style="cursor:pointer"><circle cx="122" cy="362" r="5" fill="rgba(255,255,255,0.7)"/><text x="130" y="366" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Kasese</text></g>
+        <g onclick="toast('Hoima — Oil-rich region. Bunyoro Kingdom capital.')" style="cursor:pointer"><circle cx="148" cy="252" r="5" fill="rgba(255,255,255,0.7)"/><text x="156" y="256" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Hoima</text></g>
+        <g onclick="toast('Masaka — South-central Uganda. Major trading town.')" style="cursor:pointer"><circle cx="220" cy="402" r="5" fill="rgba(255,255,255,0.7)"/><text x="228" y="406" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Masaka</text></g>
+        <g onclick="toast('Kisoro — Extreme southwest. Near DR Congo and Rwanda.')" style="cursor:pointer"><circle cx="148" cy="468" r="5" fill="rgba(255,255,255,0.7)"/><text x="155" y="472" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Kisoro</text></g>
+        <g onclick="toast('Moroto — Karamoja region. Scenic mountain landscape.')" style="cursor:pointer"><circle cx="370" cy="188" r="5" fill="rgba(255,255,255,0.7)"/><text x="378" y="192" fill="rgba(255,255,255,0.78)" font-size="9" font-family="Sora">Moroto</text></g>
+
+        <!-- International -->
+        <g onclick="toast('Nairobi, Kenya — International overnight route. 10–12 hours.')" style="cursor:pointer">
+          <circle cx="492" cy="545" r="7" fill="rgba(255,199,44,0.55)" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text x="499" y="542" fill="rgba(255,199,44,0.85)" font-size="9" font-family="Sora">Nairobi 🇰🇪</text>
+        </g>
+        <g onclick="toast('Kigali, Rwanda — International route via Kabale. ~9 hours.')" style="cursor:pointer">
+          <circle cx="60" cy="545" r="7" fill="rgba(255,199,44,0.55)" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text x="68" y="542" fill="rgba(255,199,44,0.85)" font-size="9" font-family="Sora">Kigali 🇷🇼</text>
+        </g>
+
+        <!-- Map legend -->
+        <g transform="translate(20,540)">
+          <circle cx="8" cy="8" r="7" fill="#FFC72C" opacity=".85"/>
+          <text x="20" y="12" fill="rgba(255,255,255,0.55)" font-size="9" font-family="Sora">Hub City</text>
+          <circle cx="70" cy="8" r="5" fill="rgba(255,255,255,0.7)"/>
+          <text x="80" y="12" fill="rgba(255,255,255,0.55)" font-size="9" font-family="Sora">Destination</text>
+          <circle cx="152" cy="8" r="6" fill="rgba(255,199,44,0.55)" stroke="var(--gold)" stroke-dasharray="2,2" stroke-width="1.5"/>
+          <text x="163" y="12" fill="rgba(255,255,255,0.55)" font-size="9" font-family="Sora">International</text>
+        </g>
+      </svg>
+    </div>
+    <div class="dest-grid">
+      <a href="/book?route=kla-mbale" class="dest-chip"><span class="dc-name">Kampala → Mbale</span><span class="dc-price">35,000</span></a>
+      <a href="/book?route=kla-gulu" class="dest-chip"><span class="dc-name">Kampala → Gulu</span><span class="dc-price">45,000</span></a>
+      <a href="/book?route=kla-mbarara" class="dest-chip"><span class="dc-name">Kampala → Mbarara</span><span class="dc-price">30,000</span></a>
+      <a href="/book?route=kla-kabale" class="dest-chip"><span class="dc-name">Kampala → Kabale</span><span class="dc-price">40,000</span></a>
+      <a href="/book?route=kla-ftportal" class="dest-chip"><span class="dc-name">Kampala → Fort Portal</span><span class="dc-price">40,000</span></a>
+      <a href="/book?route=kla-arua" class="dest-chip"><span class="dc-name">Kampala → Arua</span><span class="dc-price">55,000</span></a>
+      <a href="/book?route=kla-lira" class="dest-chip"><span class="dc-name">Kampala → Lira</span><span class="dc-price">38,000</span></a>
+      <a href="/book?route=kla-soroti" class="dest-chip"><span class="dc-name">Kampala → Soroti</span><span class="dc-price">36,000</span></a>
+      <a href="/book?route=kla-kasese" class="dest-chip"><span class="dc-name">Kampala → Kasese</span><span class="dc-price">42,000</span></a>
+      <a href="/book?route=kla-hoima" class="dest-chip"><span class="dc-name">Kampala → Hoima</span><span class="dc-price">32,000</span></a>
+      <a href="/book?route=kla-nairobi" class="dest-chip"><span class="dc-name">Kampala → Nairobi 🌍</span><span class="dc-price">120,000</span></a>
+      <a href="/book?route=kla-kigali" class="dest-chip"><span class="dc-name">Kampala → Kigali 🌍</span><span class="dc-price">95,000</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" style="background:#fff">
+  <div class="section-inner">
+    <div class="section-label">Simple Process</div>
+    <h2 class="section-title">Book Your Coach in 4 Steps</h2>
+    <p class="section-sub">From search to QR ticket in under 60 seconds. No account required, no app to download.</p>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-num">01</div><div class="step-title">Search Your Route</div><p class="step-desc">Enter your departure city, destination, date, and passenger count. See all available coaches with real-time seat counts and pricing.</p></div>
+      <div class="step-card"><div class="step-num">02</div><div class="step-title">Choose Your Exact Seat</div><p class="step-desc">Our interactive coach layout shows exactly which seats are available. Pick window, aisle, front, or back — your choice is guaranteed.</p></div>
+      <div class="step-card"><div class="step-num">03</div><div class="step-title">Pay via Mobile Money</div><p class="step-desc">MTN MoMo or Airtel Money sends a USSD push directly to your phone. Enter your PIN. Payment confirmed in ~8 seconds. No smartphone needed.</p></div>
+      <div class="step-card"><div class="step-num">04</div><div class="step-title">Board with QR Ticket</div><p class="step-desc">Your QR ticket arrives via SMS instantly. Show it to the driver at the bay. They scan it — green screen means you're on board.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label">Everything You Need</div>
+    <h2 class="section-title">Beyond the Journey</h2>
+    <p class="section-sub">Raylane Express is Uganda's complete transport ecosystem — passengers, parcels, and operators, all on one platform.</p>
+    <div class="svc-grid">
+      <a href="/book" class="svc-card"><div class="svc-icon">🚌</div><div class="svc-title">Scheduled Coaches</div><p class="svc-desc">Daily departures to 21 destinations. Book up to 30 days ahead at a locked price.</p></a>
+      <a href="/parcels" class="svc-card"><div class="svc-icon">📦</div><div class="svc-title">Parcel Delivery</div><p class="svc-desc">Same-day delivery across Uganda on our coach network. Full tracking, insurable.</p></a>
+      <a href="#" class="svc-card" onclick="toast('Private hire enquiry form loading...')"><div class="svc-icon">🚐</div><div class="svc-title">Private Hire</div><p class="svc-desc">Charter a full coach for events, school trips, and corporate away-days.</p></a>
+      <a href="/track" class="svc-card"><div class="svc-icon">📍</div><div class="svc-title">Live Coach Tracker</div><p class="svc-desc">GPS-accurate location updated every 15 minutes. Know exactly when your bus arrives.</p></a>
+      <a href="#" class="svc-card" onclick="toast('Corporate account application loaded.')"><div class="svc-icon">🏢</div><div class="svc-title">Corporate Accounts</div><p class="svc-desc">Monthly invoicing for NGOs, embassies, and companies. Zero per-trip friction.</p></a>
+      <a href="/account" class="svc-card"><div class="svc-icon">⭐</div><div class="svc-title">Raylane Rewards</div><p class="svc-desc">Earn points on every journey. Unlock discounts, upgrades, and priority boarding.</p></a>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENT METHODS -->
+<section class="section" style="background:#fff;padding-top:0">
+  <div class="section-inner">
+    <div class="section-label">Payment Options</div>
+    <h2 class="section-title">Pay Your Way</h2>
+    <p class="section-sub">Every major payment method in Uganda and East Africa. No bank account required — ever.</p>
+    <div class="pay-grid" style="margin-bottom:28px">
+      <div class="pay-card"><div class="pdot momo"></div>MTN Mobile Money</div>
+      <div class="pay-card"><div class="pdot airtel"></div>Airtel Money</div>
+      <div class="pay-card"><div class="pdot visa"></div>Visa / Mastercard</div>
+      <div class="pay-card"><div class="pdot mpesa"></div>M-Pesa Kenya</div>
+    </div>
+    <div style="background:var(--surface);border-radius:16px;padding:20px;max-width:480px;border:1px solid var(--border)">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;font-family:var(--font-display)">🔒 How Mobile Money Payment Works</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.85">
+        1. Enter your MTN or Airtel number at checkout<br/>
+        2. You receive a USSD push on your phone — any phone, including 2G feature phones<br/>
+        3. Enter your Mobile Money PIN — secure, no sharing with us<br/>
+        4. Confirmation arrives in approximately 8 seconds<br/>
+        5. Your QR ticket is generated and sent via SMS instantly
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPERATOR BANNER -->
+<section class="section" style="background:var(--surface)">
+  <div class="section-inner">
+    <div class="op-banner">
+      <div class="op-banner-text">
+        <h2>Grow Your Transport Business with Raylane</h2>
+        <p>Join Uganda's most advanced coach management platform. Manage bookings, fleet compliance, driver payroll, parcel revenue, and full GAAP financial statements — from one dashboard. Free to join on our Starter plan.</p>
+      </div>
+      <div class="op-banner-btns">
+        <a href="/partner" class="btn btn-gold">Apply as an Operator →</a>
+        <a href="/operator/demo" class="btn btn-ghost">View Demo Dashboard</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOYALTY -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label">Raylane Rewards</div>
+    <h2 class="section-title">Every Journey Earns Points</h2>
+    <p class="section-sub">Create a free account and earn 1 point for every UGX 100 spent. Redeem for discounts, upgrades, and exclusive Gold benefits.</p>
+    <div class="loyalty-grid">
+      <div class="tier-card t-bronze"><h3>Bronze</h3><div class="tier-pts">0 – 1,999 points</div><div class="tier-perk">Digital QR tickets</div><div class="tier-perk">30-day booking history</div><div class="tier-perk">1 point per UGX 100 spent</div></div>
+      <div class="tier-card t-silver"><h3>Silver</h3><div class="tier-pts">2,000 – 9,999 points</div><div class="tier-perk">Priority boarding</div><div class="tier-perk">1 free seat upgrade per quarter</div><div class="tier-perk">5% discount on all bookings</div><div class="tier-perk">1.5× points earn rate</div></div>
+      <div class="tier-card t-gold"><h3>Gold</h3><div class="tier-pts">10,000+ points</div><div class="tier-perk">10% off every booking</div><div class="tier-perk">Free parcel delivery monthly</div><div class="tier-perk">Dedicated WhatsApp support line</div><div class="tier-perk">2× points earn rate</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background:#fff">
+  <div class="section-inner">
+    <div class="section-label">Passenger Reviews</div>
+    <h2 class="section-title">Trusted by Ugandans</h2>
+    <div class="testimonials-grid">
+      <div class="tcard"><div class="tcard-stars">★★★★★</div><p class="tcard-quote">"Booked Kampala to Mbale at 6am, paid with MoMo in under a minute. The bus left exactly on time. This is the future of travel in Uganda."</p><div class="tcard-author"><div class="tcard-avatar">AK</div><div><div style="font-size:13px;font-weight:600">Amina Kyomugisha</div><div style="font-size:11px;color:var(--muted)">Kampala · Regular Traveller</div></div></div></div>
+      <div class="tcard"><div class="tcard-stars">★★★★★</div><p class="tcard-quote">"Sent a parcel to my mother in Gulu while on my way to work. It arrived the same afternoon and I received an SMS confirmation. Absolutely incredible."</p><div class="tcard-author"><div class="tcard-avatar">JO</div><div><div style="font-size:13px;font-weight:600">James Okello</div><div style="font-size:11px;color:var(--muted)">Gulu · Parcel Customer</div></div></div></div>
+      <div class="tcard"><div class="tcard-stars">★★★★★</div><p class="tcard-quote">"As an operator, the dashboard transformed how we manage 12 buses. Payouts every Friday automatically. The financial reports alone save us days of work each month."</p><div class="tcard-author"><div class="tcard-avatar">RN</div><div><div style="font-size:13px;font-weight:600">Robert Nsubuga</div><div style="font-size:11px;color:var(--muted)">Global Coaches · Fleet Owner</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img src="/logo.png" alt="Raylane Express" style="height:44px;width:auto;margin-bottom:12px"/>
+      <p>Uganda's first vertically integrated transport technology platform. Book seats, send parcels, and manage your fleet — all in one place.</p>
+      <div style="margin-top:18px;display:flex;gap:9px;flex-wrap:wrap">
+        <span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);color:rgba(255,255,255,.65);font-size:12px;padding:6px 12px;border-radius:var(--radius)">🇺🇬 Kampala, Uganda</span>
+        <span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);color:rgba(255,255,255,.65);font-size:12px;padding:6px 12px;border-radius:var(--radius)">📞 0800 123 456</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Travel</h4>
+      <a href="/book">Book a Seat</a>
+      <a href="/book?type=advance">Advance Booking</a>
+      <a href="/book?type=group">Group Bookings</a>
+      <a href="#">Private Hire</a>
+      <a href="/track">Track My Coach</a>
+    </div>
+    <div class="footer-col">
+      <h4>Parcels & More</h4>
+      <a href="/parcels">Send a Parcel</a>
+      <a href="/parcels#track">Track Parcel</a>
+      <a href="#">Parcel Insurance</a>
+      <a href="#">Corporate Accounts</a>
+      <a href="/account">Raylane Rewards</a>
+    </div>
+    <div class="footer-col">
+      <h4>Operators</h4>
+      <a href="/partner">Become a Partner</a>
+      <a href="/operator/demo">Operator Dashboard</a>
+      <a href="/admin">Admin Console</a>
+      <a href="/partner#plans">Pricing Plans</a>
+      <a href="#">API Documentation</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Raylane Express. All rights reserved. Tusimbudde!</span>
+    <div style="display:flex;gap:16px">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Cookie Policy</a>
+      <a href="#">Accessibility</a>
+    </div>
+  </div>
+</footer>
+
+<!-- GROUP BOOKING MODAL -->
+<div class="modal-overlay" id="group-modal">
+  <div class="modal" style="max-width:480px;margin:0 auto">
+    <div class="modal-handle"></div>
+    <h3>Group Booking</h3>
+    <p class="text-muted text-sm" style="margin-bottom:18px">For 10 or more passengers. Our team will assign dedicated coaches and provide a single group payment link.</p>
+    <div class="form-group"><label class="form-label">Group Name / Organisation</label><input class="form-input" type="text" placeholder="e.g. Makerere University Study Tour"/></div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">From City</label><select class="form-input form-select"><option>Kampala</option></select></div>
+      <div class="form-group"><label class="form-label">To City</label><select class="form-input form-select"><option>Mbale</option><option>Gulu</option><option>Mbarara</option></select></div>
+      <div class="form-group"><label class="form-label">Travel Date</label><input class="form-input" type="date"/></div>
+      <div class="form-group"><label class="form-label">Number of Passengers</label><input class="form-input" type="number" min="10" placeholder="Min. 10"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Contact Phone</label><input class="form-input" type="tel" placeholder="0771 234 567"/></div>
+    <button class="btn btn-gold btn-full" onclick="toast('Group booking request submitted! We will call you within 2 hours.');closeModal('group-modal')">Submit Group Request →</button>
+    <button class="btn btn-outline btn-full" style="margin-top:8px" onclick="closeModal('group-modal')">Cancel</button>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+<script>
+// Set default date to today
+document.getElementById('dep-date').valueAsDate = new Date();
+
+function setSearchTab(tab, el) {
+  document.querySelectorAll('.stab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  ['bus','parcel','hire'].forEach(id => {
+    document.getElementById('st-' + id)?.classList.toggle('hidden', id !== tab);
+  });
+}
+
+function handleSearch() {
+  const from = document.getElementById('from-city').value;
+  const to = document.getElementById('to-city').value;
+  const date = document.getElementById('dep-date').value;
+  if (!from) { toast('Please select a departure city.'); return; }
+  if (!to)   { toast('Please select a destination.'); return; }
+  if (from === to) { toast('Departure and destination cannot be the same.'); return; }
+  toast('Searching coaches from ' + from + ' to ' + to + '…');
+  setTimeout(() => { window.location.href = `/book?from=${from}&to=${to}&date=${date}`; }, 600);
+}
+
+function handleLocDetect() {
+  toast('📍 Detecting your location…');
+  detectNearestTerminal((terminal, err, distanceMeters) => {
+    if (err || !terminal) { toast('Could not detect location. Please select manually.'); return; }
+    const city = terminal.name.split('—')[0].trim().replace(' Coach Park','').replace(' Bus Terminal','').replace(' Bus Park','').trim();
+    document.getElementById('from-city').value = city;
+    const infoEl = document.getElementById('terminal-info');
+    const distStr = distanceMeters > 1000 ? (distanceMeters/1000).toFixed(1)+'km' : distanceMeters+'m';
+    infoEl.textContent = `📍 Nearest terminal: ${terminal.name} (${distStr} away)`;
+    infoEl.style.display = 'block';
+  });
+}
+
+function updateToOptions() {
+  const from = document.getElementById('from-city').value;
+  const to   = document.getElementById('to-city');
+  // Remove same-city option
+  Array.from(to.options).forEach(opt => {
+    opt.style.display = opt.value === from ? 'none' : '';
+  });
+}
+</script>
+</body>
+</html>
