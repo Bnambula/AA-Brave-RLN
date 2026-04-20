@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Operator Dashboard — Raylane Express</title>
+<link rel="icon" href="/logo.png" type="image/png"/>
+<link rel="stylesheet" href="/styles.css"/>
+<style>
+body { padding-top: 62px; }
+.op-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 62px; display: flex; align-items: center;
+  padding: 0 20px; gap: 14px;
+  background: var(--op-dark, #0A1628);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  transition: background 0.4s;
+}
+.op-nav-logo { display: flex; align-items: center; gap: 10px; }
+.op-logo-img { height: 38px; width: auto; object-fit: contain; }
+.op-logo-text { font-family: var(--font-display); font-weight: 800; font-size: 14px; color: #fff; line-height: 1.1; }
+.op-logo-text small { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.55); display: block; }
+.op-nav-tabs { display: flex; gap: 2px; flex: 1; overflow-x: auto; scrollbar-width: none; margin: 0 16px; }
+.op-nav-tabs::-webkit-scrollbar { display: none; }
+.op-tab {
+  color: rgba(255,255,255,0.62); text-decoration: none;
+  font-size: 12px; font-weight: 600; padding: 7px 13px;
+  border-radius: var(--radius); cursor: pointer; white-space: nowrap;
+  border: none; background: transparent; transition: all 0.2s;
+  font-family: var(--font-display);
+}
+.op-tab:hover { color: #fff; background: rgba(255,255,255,0.09); }
+.op-tab.active { color: var(--op-accent, var(--gold)); background: rgba(255,255,255,0.08); }
+.op-nav-right { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+/* Dynamic accent buttons using op vars */
+.btn-op-accent { background: var(--op-accent, var(--gold)); color: var(--op-dark, var(--navy)); }
+.btn-op-accent:hover { filter: brightness(0.9); transform: translateY(-1px); }
+.sidebar-op { background: var(--op-dark, var(--navy)); }
+.sidebar-link.active { color: var(--op-accent, var(--gold)); background: rgba(255,255,255,0.08); }
+.stat-card-op::before { background: var(--op-accent, var(--gold)); }
+
+/* Brand customiser panel */
+.brand-panel { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+.brand-preview {
+  border-radius: 14px; overflow: hidden; border: 1px solid var(--border);
+  margin-top: 18px;
+}
+.brand-preview-bar {
+  height: 52px; display: flex; align-items: center; padding: 0 18px; gap: 12px;
+  transition: background 0.3s;
+}
+.preview-logo-area { display: flex; align-items: center; gap: 10px; }
+.preview-logo-box { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.15); overflow: hidden; }
+.preview-logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.preview-dot { width: 10px; height: 10px; border-radius: 50%; margin-left: auto; transition: background 0.3s; }
+.brand-colors-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+.color-field label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 6px; }
+.color-input-wrap { display: flex; align-items: center; gap: 8px; }
+.color-input-wrap input[type="color"] { width: 38px; height: 38px; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; padding: 2px; background: #fff; }
+.color-input-wrap input[type="text"] { flex: 1; }
+.preset-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.preset { border: none; cursor: pointer; border-radius: 8px; font-size: 11px; font-weight: 700; padding: 5px 12px; transition: all 0.2s; font-family: var(--font-display); }
+
+/* Forms */
+.trip-form-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; max-width: 640px; }
+.fleet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px,1fr)); gap: 14px; }
+.fleet-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 16px; border-left: 4px solid var(--green); }
+.fleet-card.maintenance { border-left-color: var(--amber); }
+.fleet-card.inactive { border-left-color: var(--red); }
+.vehicle-plate { font-family: var(--font-display); font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+.compliance-row { display: flex; gap: 14px; font-size: 12px; margin-top: 8px; flex-wrap: wrap; }
+.comp-ok  { color: var(--green); font-weight: 600; }
+.comp-warn { color: var(--amber); font-weight: 600; }
+.comp-crit { color: var(--red); font-weight: 600; }
+.alert-banner { background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.25); border-radius: 12px; padding: 12px 16px; color: var(--red); font-size: 13px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.payout-sum { background: var(--surface); border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.payout-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.payout-row:last-child { border-bottom: none; font-weight: 800; font-size: 15px; color: var(--blue); padding-top: 10px; }
+.driver-card { background: #fff; border: 1px solid var(--border); border-radius: 13px; padding: 16px; display: flex; gap: 14px; align-items: flex-start; }
+.driver-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; color: var(--gold); font-family: var(--font-display); flex-shrink: 0; }
+.drivers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 14px; }
+.cost-categories { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.cost-cat { padding: 6px 14px; border-radius: var(--radius); font-size: 12px; font-weight: 700; cursor: pointer; border: 1.5px solid var(--border); background: #fff; transition: all 0.2s; }
+.cost-cat.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+@media(max-width:600px) { .brand-colors-grid { grid-template-columns: 1fr; } .op-nav-tabs { display: none; } }
+</style>
+</head>
+<body>
+
+<!-- OPERATOR NAV (branded) -->
+<nav class="op-nav" id="op-nav">
+  <div class="op-nav-logo">
+    <div class="preview-logo-box" id="nav-logo-box">
+      <img src="/logo.png" alt="Logo" class="op-logo-img" id="op-nav-logo-img" onerror="this.style.display='none'"/>
+    </div>
+    <div class="op-logo-text" id="op-name-display">Global Coaches Ltd<small>Raylane Express Partner</small></div>
+  </div>
+  <div class="op-nav-tabs">
+    <button class="op-tab active" onclick="opShow('dashboard',this)">Dashboard</button>
+    <button class="op-tab" onclick="opShow('add-trip',this)">Add Trip</button>
+    <button class="op-tab" onclick="opShow('my-trips',this)">My Trips</button>
+    <button class="op-tab" onclick="opShow('bookings',this)">Bookings</button>
+    <button class="op-tab" onclick="opShow('parcels-tab',this)">Parcels</button>
+    <button class="op-tab" onclick="opShow('payouts-tab',this)">Payouts</button>
+    <button class="op-tab" onclick="opShow('fleet-tab',this)">Fleet</button>
+    <button class="op-tab" onclick="opShow('drivers-tab',this)">Drivers</button>
+    <button class="op-tab" onclick="opShow('costs-tab',this)">Cost Centre</button>
+    <button class="op-tab" onclick="opShow('branding-tab',this)">Branding ✨</button>
+    <button class="op-tab" onclick="opShow('settings-tab',this)">Settings</button>
+  </div>
+  <div class="op-nav-right">
+    <button class="icon-btn" title="Notifications"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg><span class="notif-dot">3</span></button>
+    <a href="/admin" style="color:rgba(255,255,255,0.5);font-size:12px;text-decoration:none">Admin →</a>
+    <a href="/" style="color:rgba(255,255,255,0.5);font-size:12px;text-decoration:none">Public Site</a>
+  </div>
+</nav>
+
+<div class="toast" id="rl-toast"></div>
+
+<!-- ====== DASHBOARD ====== -->
+<div id="panel-dashboard" class="dash-main" style="max-width:1280px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header">
+    <div>
+      <div class="dash-title">Good Morning, Global Coaches 👋</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:2px">Monday, 20 April 2026 · <span id="live-clock">--:--:--</span></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="live-badge"><span class="live-dot"></span>43 Active Trips</div>
+      <button class="btn btn-op-accent btn-sm" onclick="opShow('add-trip',null)">+ Add Trip</button>
+    </div>
+  </div>
+
+  <!-- Compliance alert -->
+  <div class="alert-banner">
+    ⚠️ UAK 891C insurance expires in 38 days. <a href="#" onclick="opShow('fleet-tab',null);toast('Navigate to Fleet tab to renew.')" style="color:var(--red);margin-left:8px;font-weight:700">Renew Now →</a>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card stat-gold"><div class="stat-label">This Week's Revenue</div><div class="stat-value">3.2M</div><div class="stat-trend up">UGX ↑ 18% vs last week</div></div>
+    <div class="stat-card stat-blue"><div class="stat-label">Bookings Today</div><div class="stat-value">51</div><div class="stat-trend">Across 1 active trip</div></div>
+    <div class="stat-card stat-green"><div class="stat-label">Next Payout</div><div class="stat-value">1.86M</div><div class="stat-trend">UGX · Due Friday</div></div>
+    <div class="stat-card stat-purple"><div class="stat-label">Parcels In Transit</div><div class="stat-value">14</div><div class="stat-trend">Earning UGX 92,000</div></div>
+    <div class="stat-card stat-blue"><div class="stat-label">Active Fleet</div><div class="stat-value">7/8</div><div class="stat-trend">1 in maintenance</div></div>
+    <div class="stat-card stat-teal"><div class="stat-label">Seat Occupancy (Month)</div><div class="stat-value">74%</div><div class="stat-trend up">↑ 6pp vs March</div></div>
+  </div>
+
+  <!-- Today's live trip -->
+  <div class="panel" style="margin-bottom:20px">
+    <div class="panel-header"><h3>Today's Active Trip — Kampala → Mbale (07:00)</h3><span class="badge badge-live">🟢 In Transit</span></div>
+    <div class="panel-body">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:14px">
+        <div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Vehicle</div><div style="font-size:16px;font-weight:700">UAX 342P</div></div>
+        <div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Driver</div><div style="font-size:16px;font-weight:700">Moses Kagwa (PSV)</div></div>
+        <div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Passengers</div><div style="font-size:16px;font-weight:700">51 / 67</div></div>
+        <div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Revenue</div><div style="font-size:16px;font-weight:700;color:var(--blue)">UGX 1,785,000</div></div>
+        <div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Location</div><div style="font-size:14px;font-weight:600">Between Iganga &amp; Jinja · 67%</div></div>
+      </div>
+      <div style="background:var(--surface);border-radius:var(--radius);height:8px;overflow:hidden;margin-bottom:6px"><div class="progress-fill progress-blue" style="width:76%"></div></div>
+      <div style="font-size:12px;color:var(--muted)">76% occupancy · 16 unsold seats · ETA Mbale 11:42 AM</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><h3>Recent Bookings</h3><div class="search-bar"><svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11" stroke="currentColor" stroke-width="2" fill="none"/></svg><input placeholder="Search bookings…"/></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Booking ID</th><th>Passenger</th><th>Seat</th><th>Trip</th><th>Payment</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:11px;color:var(--muted)">RLX-084729</td><td style="font-weight:600">Amina Kyomugisha</td><td>14A</td><td>KLA→MBL 07:00</td><td>MTN MoMo</td><td>UGX 35,000</td><td><span class="badge badge-confirmed">Confirmed</span></td></tr>
+          <tr><td style="font-size:11px;color:var(--muted)">RLX-084728</td><td style="font-weight:600">David Ouma</td><td>22B</td><td>KLA→MBL 07:00</td><td>Airtel Money</td><td>UGX 35,000</td><td><span class="badge badge-confirmed">Confirmed</span></td></tr>
+          <tr><td style="font-size:11px;color:var(--muted)">RLX-084727</td><td style="font-weight:600">Sarah Nakibuuka</td><td>8C</td><td>KLA→MBL 07:00</td><td>Visa</td><td>UGX 35,000</td><td><span class="badge badge-confirmed">Confirmed</span></td></tr>
+          <tr><td style="font-size:11px;color:var(--muted)">RLX-084724</td><td style="font-weight:600">Peter Mwenda</td><td>3A</td><td>KLA→MBL 07:00</td><td>MTN MoMo</td><td>UGX 35,000</td><td><span class="badge badge-cancelled">Cancelled</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ADD TRIP ====== -->
+<div id="panel-add-trip" class="hidden" style="max-width:1280px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header"><div class="dash-title">Submit New Trip</div></div>
+  <div class="trip-form-card">
+    <div style="background:rgba(11,61,145,0.06);border:1px solid rgba(11,61,145,0.15);border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:var(--blue)">
+      ℹ️ All trips require Admin approval before appearing on the Raylane public website. Approval typically takes under 2 hours on business days.
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">From City</label><select class="form-input form-select"><option>Kampala</option><option>Jinja</option><option>Mbale</option><option>Gulu</option><option>Mbarara</option></select></div>
+      <div class="form-group"><label class="form-label">To City</label><select class="form-input form-select"><option>Mbale</option><option>Gulu</option><option>Mbarara</option><option>Arua</option><option>Fort Portal</option><option>Kabale</option><option>Lira</option><option>Soroti</option></select></div>
+      <div class="form-group"><label class="form-label">Departure Date</label><input class="form-input" type="date"/></div>
+      <div class="form-group"><label class="form-label">Departure Time</label><input class="form-input" type="time" value="07:00"/></div>
+      <div class="form-group"><label class="form-label">Vehicle</label><select class="form-input form-select"><option>UAX 342P — Moses Kagwa (67-Seater)</option><option>UAK 891C — Agnes Mutesi (67-Seater)</option><option>UBA 223K — John Ssebagala (14-Seater)</option></select></div>
+      <div class="form-group"><label class="form-label">Price per Seat (UGX)</label><input class="form-input" type="number" value="35000" step="500"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Coach Amenities</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked/> ❄️ Air Conditioning</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked/> 📶 WiFi</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked/> 🔌 USB Charging</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox"/> 🎵 Entertainment System</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox"/> 🍱 Refreshments</label>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes for Admin (optional)</label><textarea class="form-input" rows="3" placeholder="Any special notes about this trip — stopovers, special cargo, etc."></textarea></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-gold" onclick="toast('✅ Trip submitted for Admin approval! You will receive an SMS once it goes live on the website.')">Submit for Admin Approval →</button>
+      <button class="btn btn-outline" onclick="toast('Trip saved as draft.')">Save as Draft</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MY TRIPS ====== -->
+<div id="panel-my-trips" class="hidden" style="max-width:1280px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header"><div class="dash-title">My Trips</div><button class="btn btn-op-accent btn-sm" onclick="opShow('add-trip',null)">+ Add Trip</button></div>
+  <div class="tab-bar"><button class="tab-btn active">All Trips</button><button class="tab-btn">Pending Approval</button><button class="tab-btn">Live Now</button><button class="tab-btn">Completed</button></div>
+  <div class="panel">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Route</th><th>Date</th><th>Departure</th><th>Vehicle</th><th>Booked / Total</th><th>Revenue</th><th>Occupancy</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Kampala → Mbale</td><td>20 Apr</td><td>07:00</td><td>UAX 342P</td><td>51/67</td><td>UGX 1,785,000</td><td><div class="progress" style="width:80px;display:inline-block"><div class="progress-fill progress-blue" style="width:76%"></div></div> 76%</td><td><span class="badge badge-live">In Transit</span></td></tr>
+          <tr><td style="font-weight:600">Kampala → Mbale</td><td>19 Apr</td><td>07:00</td><td>UAX 342P</td><td>61/67</td><td>UGX 2,135,000</td><td><div class="progress" style="width:80px;display:inline-block"><div class="progress-fill progress-green" style="width:91%"></div></div> 91%</td><td><span class="badge badge-confirmed">Completed</span></td></tr>
+          <tr><td style="font-weight:600">Kampala → Gulu</td><td>18 Apr</td><td>09:00</td><td>UAK 891C</td><td>55/67</td><td>UGX 2,475,000</td><td><div class="progress" style="width:80px;display:inline-block"><div class="progress-fill progress-green" style="width:82%"></div></div> 82%</td><td><span class="badge badge-confirmed">Completed</span></td></tr>
+          <tr><td style="font-weight:600">Kampala → Arua</td><td>21 Apr</td><td>07:00</td><td>UAK 891C</td><td>0/67</td><td>—</td><td>—</td><td><span class="badge badge-pending">Pending Approval</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ====== BOOKINGS ====== -->
+<div id="panel-bookings" class="hidden" style="max-width:1280px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header"><div class="dash-title">All Bookings</div><div class="search-bar"><svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11" stroke="currentColor" stroke-width="2" fill="none"/></svg><input placeholder="Search by name or booking ID…"/></div></div>
+  <div class="panel">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Booking ID</th><th>Passenger</th><th>Phone</th><th>Route</th><th>Seat</th><th>Date</th><th>Payment</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:11px;color:var(--muted)">RLX-084729</td><td style="font-weight:600">Amina Kyomugisha</td><td>0771 234 567</td><td>KLA → MBL</td><td>14A</td><td>20 Apr</td><td>MTN MoMo</td><td>UGX 35,000</td><td><span class="badge badge-confirmed">Boarded</span></td></tr>
+          <tr><td style="font-size:11px;color:var(--muted)">RLX-084728</td><td style="font-weight:600">David Ouma</td><td>0700 938 471</td><td>KLA → MBL</td><td>22B</td><td>20 Apr</td><td>Airtel</td><td>UGX 35,000</td><td><span class="badge badge-confirmed">Confirmed</span></td></tr>
+          <tr><td style="font-size:11px;color:var(--muted)">RLX-084727</td><td style="font-weight:600">Sarah Nakibuuka</td><td>0772 481 293</td><td>KLA → MBL</td><td>8C</td><td>20 Apr</td><td>Visa</td><td>UGX 35,000</td><td><span class="badge badge-confirmed">Confirmed</span></td></tr>
+          <tr><td style="font-size:11px;color:var(--muted)">RLX-084724</td><td style="font-weight:600">Peter Mwenda</td><td>0781 274 850</td><td>KLA → MBL</td><td>3A</td><td>20 Apr</td><td>MTN MoMo</td><td>UGX 35,000</td><td><span class="badge badge-cancelled">Cancelled</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAYOUTS ====== -->
+<div id="panel-payouts-tab" class="hidden" style="max-width:1280px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header"><div class="dash-title">Payouts &amp; Settlements</div></div>
+  <div class="stats-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+    <div class="stat-card stat-gold"><div class="stat-label">Pending Settlement</div><div class="stat-value">1.86M</div><div class="stat-trend">UGX · This week</div></div>
+    <div class="stat-card stat-blue"><div class="stat-label">Paid Out April</div><div class="stat-value">9.4M</div><div class="stat-trend up">UGX ↑ 22%</div></div>
+    <div class="stat-card stat-green"><div class="stat-label">Commission Rate</div><div class="stat-value">8%</div><div class="stat-trend">Standard Plan</div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><h3>Payout History</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Period</th><th>Gross Revenue</th><th>Commission (8%)</th><th>Net Payout</th><th>MoMo Merchant</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>14–20 Apr 2026</td><td>UGX 2,020,000</td><td style="color:var(--red)">UGX 161,600</td><td style="font-weight:700;color:var(--blue)">UGX 1,858,400</td><td>MTN 291847</td><td><span class="badge badge-pending">Processing</span></td></tr>
+          <tr><td>7–13 Apr 2026</td><td>UGX 3,150,000</td><td style="color:var(--red)">UGX 252,000</td><td style="font-weight:700">UGX 2,898,000</td><td>MTN 291847</td><td><span class="badge badge-confirmed">Paid ✓</span></td></tr>
+          <tr><td>31 Mar–6 Apr 2026</td><td>UGX 2,880,000</td><td style="color:var(--red)">UGX 230,400</td><td style="font-weight:700">UGX 2,649,600</td><td>MTN 291847</td><td><span class="badge badge-confirmed">Paid ✓</span></td></tr>
+          <tr><td>24–30 Mar 2026</td><td>UGX 2,190,000</td><td style="color:var(--red)">UGX 175,200</td><td style="font-weight:700">UGX 2,014,800</td><td>MTN 291847</td><td><span class="badge badge-confirmed">Paid ✓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ====== FLEET ====== -->
+<div id="panel-fleet-tab" class="hidden" style="max-width:1280px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header"><div class="dash-title">Fleet Management</div><button class="btn btn-op-accent btn-sm" onclick="openModal('add-vehicle-modal')">+ Add Vehicle</button></div>
+  <div class="alert-banner">⚠️ UAK 891C — Insurance expiry approaching in 38 days. Renew before <strong>28 May 2026</strong> to avoid service interruption.</div>
+  <div class="fleet-grid">
+    <div class="fleet-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div class="vehicle-plate">UAX 342P</div>
+        <span class="badge badge-active">Active</span>
+      </div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Yutong ZK6127H · 2023 · 67-Seater · Global Coaches</div>
+      <div style="font-size:13px;margin-bottom:4px">👤 Moses Kagwa (PSV Licence)</div>
+      <div style="font-size:13px;margin-bottom:8px">🛣️ Kampala – Mbale Route</div>
+      <div class="compliance-row">
+        <span class="comp-ok">🛡️ Insurance: Nov 2026</span>
+        <span class="comp-ok">📋 Fitness: Aug 2026</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:12px"><button class="btn btn-blue btn-sm" onclick="toast('Vehicle details editor opened.')">Edit</button><button class="btn btn-outline btn-sm" onclick="toast('Maintenance log opened.')">Maintenance Log</button></div>
+    </div>
+    <div class="fleet-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div class="vehicle-plate">UAK 891C</div>
+        <span class="badge badge-active">Active</span>
+      </div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">King Long XMQ6127J · 2022 · 67-Seater · Global Coaches</div>
+      <div style="font-size:13px;margin-bottom:4px">👤 Agnes Mutesi (PSV Licence)</div>
+      <div style="font-size:13px;margin-bottom:8px">🛣️ Kampala – Gulu Route</div>
+      <div class="compliance-row">
+        <span class="comp-warn">⚠️ Insurance: May 2026 (38 days)</span>
+        <span class="comp-ok">📋 Fitness: Oct 2026</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:12px"><button class="btn btn-danger btn-sm" onclick="toast('Insurance renewal initiated with UAP Old Mutual.')">Renew Insurance</button><button class="btn btn-outline btn-sm">Edit</button></div>
+    </div>
+    <div class="fleet-card maintenance">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div class="vehicle-plate">UBA 223K</div>
+        <span class="badge badge-pending">Maintenance</span>
+      </div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Toyota Coaster · 2021 · 14-Seater · Global Coaches</div>
+      <div style="font-size:13px;margin-bottom:4px">👤 John Ssebagala (PSV Licence)</div>
+      <div style="font-size:13px;margin-bottom:8px">🔧 Scheduled service at AutoCare Kampala — returns 22 Apr</div>
+      <div class="compliance-row">
+        <span class="comp-ok">🛡️ Insurance: Sep 2026</span>
+        <span class="comp-crit">⚠️ Fitness: expires in 42 days</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:12px"><button class="btn btn-blue btn-sm" onclick="toast('Vehicle marked as Active.')">Mark Active</button><button class="btn btn-outline btn-sm">Edit</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== DRIVERS ====== -->
+<div id="panel-drivers-tab" class="hidden" style="max-width:1280px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header"><div class="dash-title">Driver Management</div><button class="btn btn-op-accent btn-sm" onclick="openModal('add-driver-modal')">+ Add Driver</button></div>
+  <div class="drivers-grid">
+    <div class="driver-card">
+      <div class="driver-avatar">MK</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px;margin-bottom:3px">Moses Kagwa</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">0771 284 930 · PSV Class · NID CF204728301J</div>
+        <div style="font-size:12px;margin-bottom:4px">🚌 Assigned: UAX 342P</div>
+        <div style="font-size:12px;margin-bottom:8px">Licence expires: <strong style="color:var(--green)">March 2027</strong></div>
+        <div style="display:flex;gap:4px"><span class="badge badge-active">Active</span><span class="badge" style="background:rgba(11,61,145,.1);color:var(--blue)">⭐ 4.8 / 5</span></div>
+      </div>
+    </div>
+    <div class="driver-card">
+      <div class="driver-avatar">AM</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px;margin-bottom:3px">Agnes Mutesi</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">0700 938 471 · PSV Class · NID CF199203847B</div>
+        <div style="font-size:12px;margin-bottom:4px">🚌 Assigned: UAK 891C</div>
+        <div style="font-size:12px;margin-bottom:8px">Licence expires: <strong style="color:var(--green)">August 2026</strong></div>
+        <div style="display:flex;gap:4px"><span class="badge badge-active">Active</span><span class="badge" style="background:rgba(11,61,145,.1);color:var(--blue)">⭐ 4.7 / 5</span></div>
+      </div>
+    </div>
+    <div class="driver-card">
+      <div class="driver-avatar">JS</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:15px;margin-bottom:3px">John Ssebagala</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">0781 293 048 · PSV Class · NID CF200104928A</div>
+        <div style="font-size:12px;margin-bottom:4px">🚌 Assigned: UBA 223K (Maintenance)</div>
+        <div style="font-size:12px;margin-bottom:8px">Licence expires: <strong style="color:var(--amber)">June 2026 ⚠️</strong></div>
+        <div style="display:flex;gap:4px"><span class="badge badge-pending">Off Duty</span><span class="badge" style="background:rgba(11,61,145,.1);color:var(--blue)">⭐ 4.9 / 5</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PARCELS TAB ====== -->
+<div id="panel-parcels-tab" class="hidden" style="max-width:1280px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header"><div class="dash-title">Parcel Revenue</div></div>
+  <div class="stats-grid">
+    <div class="stat-card stat-gold"><div class="stat-label">Parcel Revenue (April)</div><div class="stat-value">842K</div><div class="stat-trend up">UGX ↑ 34%</div></div>
+    <div class="stat-card stat-blue"><div class="stat-label">Parcels This Month</div><div class="stat-value">94</div><div class="stat-trend">Average 3.1/trip</div></div>
+    <div class="stat-card stat-green"><div class="stat-label">In Transit Now</div><div class="stat-value">14</div><div class="stat-trend">On 1 active coach</div></div>
+    <div class="stat-card stat-purple"><div class="stat-label">Avg. Parcel Value</div><div class="stat-value">8,957</div><div class="stat-trend">UGX per parcel</div></div>
+  </div>
+  <div class="panel">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tracking ID</th><th>Sender</th><th>Recipient City</th><th>Category</th><th>Status</th><th>Revenue</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600;font-size:12px">PKL-847291</td><td>Grace Nakato</td><td>Mbale</td><td>Small Parcel</td><td><span class="badge badge-live">In Transit</span></td><td>UGX 11,040</td></tr>
+          <tr><td style="font-weight:600;font-size:12px">PKL-847290</td><td>Richard Ssali</td><td>Mbale</td><td>Envelope</td><td><span class="badge badge-live">In Transit</span></td><td>UGX 4,600</td></tr>
+          <tr><td style="font-weight:600;font-size:12px">PKL-847289</td><td>Fatuma Hassan</td><td>Mbale</td><td>Large Parcel</td><td><span class="badge badge-confirmed">Delivered</span></td><td>UGX 18,400</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ====== COST CENTRE ====== -->
+<div id="panel-costs-tab" class="hidden" style="max-width:1280px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header"><div class="dash-title">Cost Centre</div><button class="btn btn-op-accent btn-sm" onclick="openModal('add-cost-modal')">+ Add Expense</button></div>
+  <div class="cost-categories">
+    <button class="cost-cat active" onclick="setCostCat(this)">All</button>
+    <button class="cost-cat" onclick="setCostCat(this)">⛽ Fuel</button>
+    <button class="cost-cat" onclick="setCostCat(this)">🔧 Maintenance</button>
+    <button class="cost-cat" onclick="setCostCat(this)">🚿 Washing</button>
+    <button class="cost-cat" onclick="setCostCat(this)">🛡️ Insurance</button>
+    <button class="cost-cat" onclick="setCostCat(this)">👤 Staff</button>
+    <button class="cost-cat" onclick="setCostCat(this)">📄 Permit</button>
+    <button class="cost-cat" onclick="setCostCat(this)">📊 Tax</button>
+    <button class="cost-cat" onclick="setCostCat(this)">Other</button>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><h3>April 2026 Expenses</h3><div style="font-size:14px;font-weight:700;color:var(--red)">Total: UGX 2,847,000</div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Category</th><th>Vehicle</th><th>Vendor</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>18 Apr</td><td><span class="badge" style="background:rgba(234,179,8,.1);color:#a16207">⛽ Fuel</span></td><td>UAX 342P</td><td>Total Energies Kampala</td><td>Full tank before Mbale trip</td><td>UGX 350,000</td><td><span class="badge badge-confirmed">Paid</span></td></tr>
+          <tr><td>17 Apr</td><td><span class="badge" style="background:rgba(99,102,241,.1);color:#4338ca">🔧 Maintenance</span></td><td>UBA 223K</td><td>AutoCare Kampala</td><td>Oil change + tyre rotation</td><td>UGX 480,000</td><td><span class="badge badge-pending">Unpaid</span></td></tr>
+          <tr><td>15 Apr</td><td><span class="badge" style="background:rgba(6,182,212,.1);color:#0e7490">🚿 Washing</span></td><td>ALL</td><td>Clean Ride Uganda</td><td>Weekly wash — all 3 buses</td><td>UGX 120,000</td><td><span class="badge badge-confirmed">Paid</span></td></tr>
+          <tr><td>1 Apr</td><td><span class="badge" style="background:rgba(239,68,68,.1);color:#b91c1c">🛡️ Insurance</span></td><td>UAK 891C</td><td>UAP Old Mutual</td><td>MTP Monthly allocation</td><td>UGX 29,167</td><td><span class="badge badge-confirmed">Paid</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ====== BRANDING / CUSTOMISATION ====== -->
+<div id="panel-branding-tab" class="hidden" style="max-width:1280px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header"><div class="dash-title">Portal Branding &amp; Customisation</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:900px">
+
+    <!-- Logo upload -->
+    <div class="brand-panel">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:6px">Company Logo</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:18px">Upload your company logo (PNG or JPEG, max 2MB). It will appear in your operator portal navigation and on passenger-facing receipts.</p>
+      <div class="logo-upload-area" id="logo-drop-area" onclick="document.getElementById('logo-file-input').click()">
+        <img id="logo-preview-img" class="logo-preview" src="" alt="" style="display:none"/>
+        <div id="logo-drop-text">
+          <div style="font-size:28px;margin-bottom:8px">📁</div>
+          <div style="font-size:14px;font-weight:600;color:var(--blue);margin-bottom:4px">Click to upload or drag &amp; drop</div>
+          <div style="font-size:12px;color:var(--muted)">PNG or JPEG · Max 2MB · Recommended: 400×120px on white background</div>
+        </div>
+      </div>
+      <input type="file" id="logo-file-input" accept="image/png,image/jpeg" style="display:none" onchange="handleLogoFile(this)"/>
+      <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="document.getElementById('logo-file-input').click()">Choose File</button>
+      <button class="btn btn-danger btn-sm" style="margin-top:10px;margin-left:6px" onclick="clearLogo()">Remove Logo</button>
+    </div>
+
+    <!-- Color scheme -->
+    <div class="brand-panel">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:6px">Brand Colours</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Customise the portal to match your company's brand identity.</p>
+
+      <!-- Preset themes -->
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Quick Presets</div>
+      <div class="preset-chips">
+        <button class="preset" style="background:#0B3D91;color:#fff" onclick="applyPreset('#0B3D91','#FFC72C','#0A1628')">Raylane Blue</button>
+        <button class="preset" style="background:#1a5c32;color:#fff" onclick="applyPreset('#1a5c32','#FFD700','#0d2e19')">Uganda Green</button>
+        <button class="preset" style="background:#C8102E;color:#fff" onclick="applyPreset('#C8102E','#FFC107','#7a0a1a')">Bold Red</button>
+        <button class="preset" style="background:#FF6B00;color:#fff" onclick="applyPreset('#FF6B00','#1a1a2e','#8B3A00')">Safari Orange</button>
+        <button class="preset" style="background:#1B1B2F;color:#fff" onclick="applyPreset('#1B1B2F','#E94560','#0f0f1a')">Midnight</button>
+        <button class="preset" style="background:#2196F3;color:#fff" onclick="applyPreset('#2196F3','#FF9800','#0d47a1')">Sky Blue</button>
+      </div>
+
+      <div class="brand-colors-grid" style="margin-top:18px">
+        <div class="color-field">
+          <label>Primary Colour</label>
+          <div class="color-input-wrap">
+            <input type="color" id="color-primary" value="#0B3D91" oninput="syncColor('primary',this.value)"/>
+            <input type="text" class="form-input" id="color-primary-hex" value="#0B3D91" style="font-family:monospace;font-size:13px" oninput="syncColorFromHex('primary',this.value)"/>
+          </div>
+        </div>
+        <div class="color-field">
+          <label>Accent / CTA Colour</label>
+          <div class="color-input-wrap">
+            <input type="color" id="color-accent" value="#FFC72C" oninput="syncColor('accent',this.value)"/>
+            <input type="text" class="form-input" id="color-accent-hex" value="#FFC72C" style="font-family:monospace;font-size:13px" oninput="syncColorFromHex('accent',this.value)"/>
+          </div>
+        </div>
+        <div class="color-field">
+          <label>Dark Background</label>
+          <div class="color-input-wrap">
+            <input type="color" id="color-dark" value="#0A1628" oninput="syncColor('dark',this.value)"/>
+            <input type="text" class="form-input" id="color-dark-hex" value="#0A1628" style="font-family:monospace;font-size:13px" oninput="syncColorFromHex('dark',this.value)"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Company name -->
+    <div class="brand-panel">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:12px">Portal Display Name</h3>
+      <div class="form-group"><label class="form-label">Company Name (shown in portal nav)</label><input class="form-input" id="company-name-input" type="text" value="Global Coaches Ltd" oninput="updateCompanyName(this.value)"/></div>
+      <div class="form-group"><label class="form-label">Tagline (optional)</label><input class="form-input" id="company-tagline-input" type="text" value="Raylane Express Partner" placeholder="e.g. Connecting Northern Uganda"/></div>
+      <button class="btn btn-blue" onclick="saveCompanyName()">Save Display Name</button>
+    </div>
+
+    <!-- Live Preview -->
+    <div class="brand-panel">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:12px">Live Preview</h3>
+      <div class="brand-preview">
+        <div class="brand-preview-bar" id="preview-bar" style="background:#0A1628">
+          <div class="preview-logo-area">
+            <div class="preview-logo-box" id="preview-logo-box" style="background:rgba(255,255,255,0.15)">
+              <img id="preview-logo-img" src="/logo.png" alt="logo" style="max-width:100%;max-height:100%;object-fit:contain;display:block" onerror="this.style.display='none'"/>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:800;font-family:var(--font-display);color:#fff" id="preview-name">Global Coaches Ltd</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.5)">Raylane Express Partner</div>
+            </div>
+          </div>
+          <div class="preview-dot" id="preview-dot" style="background:#FFC72C"></div>
+        </div>
+        <div style="padding:14px;background:#fff">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Sample button with your accent colour:</div>
+          <button id="preview-btn" style="background:#FFC72C;color:#0A1628;border:none;border-radius:999px;font-size:13px;font-weight:700;padding:10px 20px;cursor:pointer;font-family:var(--font-display)">Book a Seat →</button>
+          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Sample nav link:</div>
+          <div id="preview-link" style="color:#0B3D91;font-size:13px;font-weight:600;margin-top:4px;cursor:pointer">My Trips · Fleet · Payouts</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-gold" onclick="saveBranding()">✅ Save &amp; Apply Branding</button>
+    <button class="btn btn-outline" onclick="resetBranding()">Reset to Raylane Defaults</button>
+  </div>
+  <p style="font-size:12px;color:var(--muted);margin-top:10px">Branding is saved to your browser and applied to your operator portal. It does not affect the Raylane public website or other operators.</p>
+</div>
+
+<!-- ====== SETTINGS ====== -->
+<div id="panel-settings-tab" class="hidden" style="max-width:700px;margin:0 auto;padding:24px 20px">
+  <div class="dash-header"><div class="dash-title">Account Settings</div></div>
+  <div class="brand-panel" style="margin-bottom:16px">
+    <h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Business Details</h3>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Company Name</label><input class="form-input" value="Global Coaches Ltd"/></div>
+      <div class="form-group"><label class="form-label">TIN Number</label><input class="form-input" value="1002847319"/></div>
+      <div class="form-group"><label class="form-label">Admin Phone</label><input class="form-input" type="tel" value="0771 284 930"/></div>
+      <div class="form-group"><label class="form-label">Admin Email</label><input class="form-input" type="email" value="admin@globalcoaches.ug"/></div>
+      <div class="form-group"><label class="form-label">MTN MoMo Merchant Code</label><input class="form-input" value="291847"/></div>
+      <div class="form-group"><label class="form-label">Subscription Plan</label><select class="form-input form-select"><option selected>Standard — UGX 200,000/mo</option><option>Starter (Free)</option><option>Professional — UGX 450,000/mo</option><option>Enterprise — UGX 900,000/mo</option></select></div>
+    </div>
+    <button class="btn btn-blue" onclick="toast('Settings saved successfully.')">Save Changes</button>
+  </div>
+  <div class="brand-panel">
+    <h3 style="font-size:15px;font-weight:700;margin-bottom:6px">Request Additional Modules</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Unlock additional features without upgrading your full plan. Admin activates within 24 hours of payment confirmation.</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600">📊 Analytics Dashboard</div><div style="font-size:12px;color:var(--muted)">Load factors, revenue per seat, route trends</div></div><button class="btn btn-outline btn-sm" onclick="toast('Analytics module request submitted. Admin will confirm within 24h.')">Request — 100K/mo</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:13px;font-weight:600">👥 Staff / HR &amp; Payroll</div><div style="font-size:12px;color:var(--muted)">Full payroll processing, PAYE, NSSF</div></div><button class="btn btn-outline btn-sm" onclick="toast('HR module request submitted.')">Request — 100K/mo</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0"><div><div style="font-size:13px;font-weight:600">⛽ Advanced Fuel Log</div><div style="font-size:12px;color:var(--muted)">Per-trip fuel tracking with efficiency analytics</div></div><button class="btn btn-outline btn-sm" onclick="toast('Fuel log module request submitted.')">Request — 80K/mo</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD VEHICLE MODAL -->
+<div class="modal-overlay" id="add-vehicle-modal">
+  <div class="modal" style="max-width:540px;margin:0 auto;position:relative">
+    <div class="modal-handle"></div>
+    <h3 style="margin-bottom:4px">Add Vehicle to Fleet</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:18px">All vehicles require valid insurance and fitness certificate before trips can be approved.</p>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Registration Plate</label><input class="form-input" placeholder="e.g. UAX 342P"/></div>
+      <div class="form-group"><label class="form-label">Vehicle Type</label><select class="form-input form-select"><option>67-Seater Coach</option><option>14-Seater Minivan</option></select></div>
+      <div class="form-group"><label class="form-label">Make &amp; Model</label><input class="form-input" placeholder="e.g. Yutong ZK6127H"/></div>
+      <div class="form-group"><label class="form-label">Year</label><input class="form-input" type="number" value="2023" min="2000" max="2026"/></div>
+      <div class="form-group"><label class="form-label">Assign Driver</label><select class="form-input form-select"><option>— Select Driver —</option><option>Moses Kagwa (PSV)</option><option>Agnes Mutesi (PSV)</option><option>John Ssebagala (PSV)</option></select></div>
+      <div class="form-group"><label class="form-label">Monthly Insurance (UGX)</label><input class="form-input" type="number" placeholder="e.g. 29167"/></div>
+      <div class="form-group"><label class="form-label">Insurance Expiry Date</label><input class="form-input" type="date"/></div>
+      <div class="form-group"><label class="form-label">Road Fitness Expiry Date</label><input class="form-input" type="date"/></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="btn btn-gold btn-full" onclick="toast('Vehicle added to fleet! Compliance dates will be monitored automatically.');closeModal('add-vehicle-modal')">Add Vehicle →</button>
+      <button class="btn btn-outline" onclick="closeModal('add-vehicle-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD DRIVER MODAL -->
+<div class="modal-overlay" id="add-driver-modal">
+  <div class="modal" style="max-width:540px;margin:0 auto">
+    <div class="modal-handle"></div>
+    <h3 style="margin-bottom:4px">Add Driver</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:18px">PSV licence class is required for passenger vehicle drivers. NID is required for compliance.</p>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" placeholder="e.g. Moses Kagwa"/></div>
+      <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" type="tel" placeholder="0771 234 567"/></div>
+      <div class="form-group"><label class="form-label">National ID (NID)</label><input class="form-input" placeholder="e.g. CF204728301J"/></div>
+      <div class="form-group"><label class="form-label">Licence Class</label><select class="form-input form-select"><option>PSV (Required for coaches)</option><option>Class B</option><option>Class C</option></select></div>
+      <div class="form-group"><label class="form-label">Licence Expiry Date</label><input class="form-input" type="date"/></div>
+      <div class="form-group"><label class="form-label">Monthly Salary (UGX)</label><input class="form-input" type="number" placeholder="e.g. 800000"/></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-gold btn-full" onclick="toast('Driver added successfully. Licence expiry will be monitored automatically.');closeModal('add-driver-modal')">Add Driver →</button>
+      <button class="btn btn-outline" onclick="closeModal('add-driver-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD COST MODAL -->
+<div class="modal-overlay" id="add-cost-modal">
+  <div class="modal" style="max-width:520px;margin:0 auto">
+    <div class="modal-handle"></div>
+    <h3 style="margin-bottom:18px">Log Expense</h3>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Category</label><select class="form-input form-select"><option>Fuel</option><option>Maintenance</option><option>Washing</option><option>Insurance</option><option>Staff</option><option>Permit</option><option>Tax</option><option>Other</option></select></div>
+      <div class="form-group"><label class="form-label">Vehicle</label><select class="form-input form-select"><option>All Vehicles</option><option>UAX 342P</option><option>UAK 891C</option><option>UBA 223K</option></select></div>
+      <div class="form-group"><label class="form-label">Amount (UGX)</label><input class="form-input" type="number" placeholder="e.g. 350000"/></div>
+      <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date"/></div>
+      <div class="form-group"><label class="form-label">Vendor</label><input class="form-input" placeholder="e.g. Total Energies Kampala"/></div>
+      <div class="form-group"><label class="form-label">Invoice Number</label><input class="form-input" placeholder="Optional"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><input class="form-input" placeholder="Brief description of expense"/></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-gold btn-full" onclick="toast('Expense logged successfully.');closeModal('add-cost-modal')">Log Expense →</button>
+      <button class="btn btn-outline" onclick="closeModal('add-cost-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+<script>
+// ── Panel switching ──
+function opShow(id, btn) {
+  document.querySelectorAll('[id^="panel-"]').forEach(p => p.classList.add('hidden'));
+  const el = document.getElementById('panel-' + id);
+  if (el) el.classList.remove('hidden');
+  document.querySelectorAll('.op-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+// ── Live clock ──
+startLiveClock('live-clock');
+
+// ── Cost category filter ──
+function setCostCat(el) {
+  document.querySelectorAll('.cost-cat').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── Branding: logo ──
+function handleLogoFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { toast('File too large. Maximum 2MB.'); return; }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const src = ev.target.result;
+    // Update preview
+    const previewImg = document.getElementById('preview-logo-img');
+    const navLogoImg = document.getElementById('op-nav-logo-img');
+    const previewLogoImg = document.getElementById('logo-preview-img');
+    const dropText = document.getElementById('logo-drop-text');
+    [previewImg, navLogoImg, previewLogoImg].forEach(el => { if(el) { el.src = src; el.style.display = 'block'; }});
+    if (dropText) dropText.style.display = 'none';
+    localStorage.setItem('rl_op_logo', src);
+    toast('✅ Logo uploaded! Save branding to apply.');
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearLogo() {
+  localStorage.removeItem('rl_op_logo');
+  ['preview-logo-img','op-nav-logo-img','logo-preview-img'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.src = ''; el.style.display = 'none'; }
+  });
+  const dt = document.getElementById('logo-drop-text');
+  if (dt) dt.style.display = 'block';
+  toast('Logo removed.');
+}
+
+// ── Branding: colors ──
+function syncColor(key, hex) {
+  document.getElementById('color-' + key + '-hex').value = hex;
+  updatePreview();
+}
+function syncColorFromHex(key, hex) {
+  if (/^#[0-9a-fA-F]{6}$/.test(hex)) {
+    document.getElementById('color-' + key).value = hex;
+    updatePreview();
+  }
+}
+function applyPreset(primary, accent, dark) {
+  document.getElementById('color-primary').value = primary;
+  document.getElementById('color-primary-hex').value = primary;
+  document.getElementById('color-accent').value = accent;
+  document.getElementById('color-accent-hex').value = accent;
+  document.getElementById('color-dark').value = dark;
+  document.getElementById('color-dark-hex').value = dark;
+  updatePreview();
+  applyOperatorBranding(primary, accent, dark);
+}
+function updatePreview() {
+  const primary = document.getElementById('color-primary').value;
+  const accent  = document.getElementById('color-accent').value;
+  const dark    = document.getElementById('color-dark').value;
+  document.getElementById('preview-bar').style.background = dark;
+  document.getElementById('preview-dot').style.background = accent;
+  document.getElementById('preview-btn').style.background = accent;
+  document.getElementById('preview-btn').style.color = dark;
+  document.getElementById('preview-link').style.color = primary;
+}
+function updateCompanyName(val) {
+  const el = document.getElementById('preview-name');
+  if (el) el.textContent = val;
+  const navEl = document.getElementById('op-name-display');
+  if (navEl) navEl.childNodes[0].textContent = val;
+}
+function saveCompanyName() {
+  const name = document.getElementById('company-name-input').value;
+  const tag  = document.getElementById('company-tagline-input').value;
+  localStorage.setItem('rl_op_company', JSON.stringify({ name, tag }));
+  toast('✅ Display name saved.');
+}
+function saveBranding() {
+  const primary = document.getElementById('color-primary').value;
+  const accent  = document.getElementById('color-accent').value;
+  const dark    = document.getElementById('color-dark').value;
+  localStorage.setItem('rl_op_branding', JSON.stringify({ primary, accent, dark }));
+  applyOperatorBranding(primary, accent, dark);
+  // Apply to nav
+  document.getElementById('op-nav').style.background = dark;
+  document.querySelectorAll('.btn-op-accent').forEach(b => { b.style.background = accent; b.style.color = dark; });
+  toast('✅ Branding saved and applied to your portal!');
+}
+function resetBranding() {
+  localStorage.removeItem('rl_op_branding');
+  applyPreset('#0B3D91', '#FFC72C', '#0A1628');
+  document.getElementById('op-nav').style.background = '#0A1628';
+  toast('Branding reset to Raylane defaults.');
+}
+
+// Drag & drop logo
+const dropArea = document.getElementById('logo-drop-area');
+if (dropArea) {
+  ['dragenter','dragover'].forEach(evt => dropArea.addEventListener(evt, e => { e.preventDefault(); dropArea.style.borderColor = 'var(--blue)'; }));
+  ['dragleave','drop'].forEach(evt => dropArea.addEventListener(evt, e => { e.preventDefault(); dropArea.style.borderColor = 'var(--border)'; }));
+  dropArea.addEventListener('drop', e => {
+    const file = e.dataTransfer.files[0];
+    if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+      const fakeInput = { files: [file] };
+      handleLogoFile(fakeInput);
+    }
+  });
+}
+
+// Load saved branding on boot
+(function() {
+  try {
+    const b = JSON.parse(localStorage.getItem('rl_op_branding') || '{}');
+    if (b.primary) applyPreset(b.primary, b.accent || '#FFC72C', b.dark || '#0A1628');
+    const logo = localStorage.getItem('rl_op_logo');
+    if (logo) {
+      ['preview-logo-img','op-nav-logo-img','logo-preview-img'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.src = logo; el.style.display = 'block'; }
+      });
+      const dt = document.getElementById('logo-drop-text');
+      if (dt) dt.style.display = 'none';
+    }
+    const co = JSON.parse(localStorage.getItem('rl_op_company') || '{}');
+    if (co.name) {
+      const inp = document.getElementById('company-name-input');
+      if (inp) inp.value = co.name;
+      updateCompanyName(co.name);
+    }
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>
