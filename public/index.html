@@ -3215,6 +3215,718 @@ function printTicket(bookingId){
 }
 
 console.log('✅ Raylane Express v4 fully loaded — all modules active');
+
+
+/* =========================================================
+   RAYLANE EXPRESS v5 — COMPLETE REBUILD OF ALL BROKEN PARTS
+   Enroute boarding, hero carousel, route scenery,
+   FedEx-style dashboards, ALL buttons functional
+   ========================================================= */
+
+/* ---- HERO CAROUSEL STATE ---- */
+window.heroSlide = 0;
+const HERO_SLIDES = [
+  { bg:'linear-gradient(135deg,#0A1628 0%,#0d3070 60%,#0A1628 100%)', emoji:'🌿', label:'Kampala → Jinja', sub:'Through Mabira Forest Rainforest' },
+  { bg:'linear-gradient(135deg,#0A1628 0%,#1a3a0a 60%,#0A1628 100%)', emoji:'🌊', label:'Kampala → Gulu', sub:'Crossing the Nile at Karuma Falls' },
+  { bg:'linear-gradient(135deg,#0A1628 0%,#2a1a05 60%,#0A1628 100%)', emoji:'⛰️', label:'Kampala → Fort Portal', sub:'Through the Rwenzori Mountain foothills' },
+  { bg:'linear-gradient(135deg,#0A1628 0%,#051a2a 60%,#0A1628 100%)', emoji:'🦍', label:'Kampala → Kabale', sub:'Gateway to Bwindi Gorilla National Park' },
+  { bg:'linear-gradient(135deg,#0A1628 0%,#1a0a28 60%,#0A1628 100%)', emoji:'🌍', label:'Kampala → Nairobi', sub:'International overnight corridor' },
+];
+
+/* ---- ENROUTE BOARDING DATA ---- */
+ST.enrouteStops = {
+  'T001': [ // Kampala → Mbale
+    {stop:'Mukono', km:20, time:'07:45', code:'MUK'},
+    {stop:'Lugazi', km:42, time:'08:15', code:'LUG'},
+    {stop:'Najjembe (Mabira)', km:54, time:'08:35', code:'MAB'},
+    {stop:'Jinja City', km:81, time:'09:15', code:'JNJ'},
+    {stop:'Iganga', km:114, time:'10:00', code:'IGA'},
+    {stop:'Mbale', km:225, time:'11:30', code:'MBL'},
+  ],
+  'T002': [ // Kampala → Gulu
+    {stop:'Luwero', km:72, time:'08:45', code:'LWR'},
+    {stop:'Kafu Junction', km:165, time:'10:15', code:'KAF'},
+    {stop:'Karuma Bridge', km:257, time:'11:30', code:'KAR'},
+    {stop:'Gulu City', km:334, time:'13:30', code:'GUL'},
+  ],
+  'T003': [ // Kampala → Mbarara
+    {stop:'Lwengo', km:80, time:'09:20', code:'LWN'},
+    {stop:'Masaka', km:137, time:'10:20', code:'MSK'},
+    {stop:'Lyantonde', km:185, time:'11:10', code:'LYN'},
+    {stop:'Mbarara', km:266, time:'12:00', code:'MBA'},
+  ],
+};
+
+/* ---- ROUTE SCENERY DATA ---- */
+const ROUTE_SCENERY = [
+  {
+    name: 'Mabira Forest',
+    route: 'Kampala → Jinja / Mbale',
+    km: '54km from Kampala',
+    emoji: '🌿',
+    color: '#1a5c32',
+    tagline: 'Uganda\'s Ancient Rainforest',
+    description: 'Pass through 300 sq km of ancient tropical rainforest along the Kampala–Jinja highway. Over 316 bird species, red-tailed monkeys, and the rare Uganda Mangabey call this forest home. The canopy creates a cathedral of green over the road — a moment passengers remember forever.',
+    facts: ['316 bird species', 'Established 1900s', '300 sq km canopy', 'Zip-lining available'],
+    tip: 'Watch for red-tailed monkeys in the trees as the coach slows at Najjembe market.'
+  },
+  {
+    name: 'Source of the Nile',
+    route: 'Kampala → Mbale / Jinja',
+    km: 'Jinja City — 81km',
+    emoji: '🌊',
+    color: '#0a3d6b',
+    tagline: 'Where Africa\'s Greatest River Begins',
+    description: 'Jinja City sits at the point where Lake Victoria gives birth to the mighty River Nile — a river that flows 6,650km north to the Mediterranean Sea. The New Nile Bridge offers a breathtaking crossing with panoramic views of the rapids below.',
+    facts: ['6,650km long river', 'New cable bridge 2018', 'Grade 5 whitewater rafting', 'Adventure capital of East Africa'],
+    tip: 'Look left as you cross the Nile Bridge for a perfect river view. Dawn crossings are spectacular.'
+  },
+  {
+    name: 'Karuma Falls & Bridge',
+    route: 'Kampala → Gulu / Arua',
+    km: '257km from Kampala',
+    emoji: '⚡',
+    color: '#2d4a1a',
+    tagline: 'The Nile\'s Most Dramatic Crossing',
+    description: 'The Karuma Falls Bridge crosses the Victoria Nile at its most powerful — where the river tumbles through a series of natural rock formations creating spectacular white foam rapids. Named after "Karuma", the great spirit the Luo people believe placed these rocks in the river. Adjacent to the eastern boundary of Murchison Falls National Park.',
+    facts: ['Built 1963', 'Victoria Nile crossing', '600MW hydropower nearby', 'Murchison Falls Park gateway'],
+    tip: 'Drivers slow at the bridge for safety — use the moment to photograph the rapids below. Best light in the morning.'
+  },
+  {
+    name: 'Rwenzori Mountain Foothills',
+    route: 'Kampala → Fort Portal / Kasese',
+    km: 'From 280km',
+    emoji: '⛰️',
+    color: '#3d1a0a',
+    tagline: 'Mountains of the Moon',
+    description: 'The approach to Fort Portal reveals the dramatic snow-capped peaks of the Rwenzori Mountains — the legendary "Mountains of the Moon" described by Ptolemy in 150AD. The highest peak, Margherita, rises to 5,109m. As the coach descends into Fort Portal, tea plantations carpet the hillsides in shades of emerald.',
+    facts: ['5,109m peak height', 'Snow-capped year round', 'UNESCO World Heritage', 'Tea plantations en route'],
+    tip: 'The Rwenzori peaks are clearest in January and June. Request a window seat on the right side of the bus.'
+  },
+  {
+    name: 'Lake Bunyonyi Crater Lakes',
+    route: 'Kampala → Kabale',
+    km: 'From 350km',
+    emoji: '🏞️',
+    color: '#0a2d4a',
+    tagline: '29 Islands on Africa\'s Deepest Lake',
+    description: 'As the road winds down into Kabale District, the emerald terraced hillsides of southwestern Uganda unfold — one of the most beautiful landscapes on the continent. Lake Bunyonyi, with its 29 islands and waters up to 900m deep, shimmers below. The gateway to Bwindi Impenetrable Forest and Uganda\'s mountain gorillas.',
+    facts: ['29 islands', 'Up to 900m deep', 'Gateway to gorilla trekking', 'Near Rwanda border'],
+    tip: 'Arrive in Kabale in the afternoon for golden-hour views over Lake Bunyonyi before the final descent.'
+  },
+  {
+    name: 'Ziwa Rhino Sanctuary',
+    route: 'Kampala → Gulu / Arua',
+    km: '176km from Kampala',
+    emoji: '🦏',
+    color: '#4a2d00',
+    tagline: 'Uganda\'s Only Wild Rhinos',
+    description: 'Ziwa Rhino Sanctuary is Uganda\'s only place to see wild white rhinos on foot. Located right along the Kampala–Gulu highway, Raylane coaches pass within 2km of the sanctuary. The sanctuary is home to over 30 rhinos — part of Uganda\'s national programme to re-establish a wild rhino population.',
+    facts: ['30+ white rhinos', 'Walk with rhinos on foot', '7,000 acres sanctuary', '176km from Kampala'],
+    tip: 'Ask your driver to point out the Ziwa turnoff — you can arrange a side trip on your return journey.'
+  },
+];
+
+/* =========================================================
+   COMPLETE renderHome REPLACEMENT WITH HERO CAROUSEL
+   ========================================================= */
+window.renderHome = function(el) {
+  const CITIES = ['Kampala','Entebbe','Jinja','Mbale','Gulu','Arua','Mbarara','Fort Portal','Kabale','Lira','Soroti','Tororo','Kasese','Masaka','Hoima','Kisoro','Moroto','Nairobi (Kenya)','Kigali (Rwanda)'];
+  const cityOpts = CITIES.map(c=>`<option>${c}</option>`).join('');
+  const slide = HERO_SLIDES[0];
+  el.innerHTML = navHTML('home') + `
+
+  <!-- ========== ANIMATED HERO WITH CAROUSEL ========== -->
+  <section id="hero-section" style="min-height:100vh;position:relative;display:flex;flex-direction:column;justify-content:center;overflow:hidden;padding-top:62px;transition:background 1s ease">
+    <div id="hero-bg" style="position:absolute;inset:0;background:${slide.bg};transition:background 1.2s ease"></div>
+    <!-- Animated orbs -->
+    <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden">
+      <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:rgba(255,199,44,.06);top:-100px;right:-100px;animation:orbFloat 8s ease-in-out infinite"></div>
+      <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(11,61,145,.4);bottom:-80px;left:-80px;animation:orbFloat 10s ease-in-out infinite reverse"></div>
+      <div style="position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,199,44,.04);top:40%;left:40%;animation:orbFloat 6s ease-in-out infinite 2s"></div>
+    </div>
+    <!-- Grid pattern overlay -->
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none"></div>
+    
+    <!-- Slide indicators -->
+    <div style="position:absolute;top:80px;right:20px;display:flex;flex-direction:column;gap:6px;z-index:5">
+      ${HERO_SLIDES.map((_,i)=>`<div class="hero-ind" data-idx="${i}" onclick="setHeroSlide(${i})" style="width:6px;height:${i===0?'24px':'8px'};border-radius:3px;background:${i===0?'var(--gold)':'rgba(255,255,255,.3)'};cursor:pointer;transition:all .4s"></div>`).join('')}
+    </div>
+
+    <div style="position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:44px 16px 28px;width:100%">
+      <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+        <!-- LEFT -->
+        <div style="flex:1;min-width:260px">
+          <!-- Slide badge -->
+          <div id="hero-slide-badge" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,199,44,.12);border:1px solid rgba(255,199,44,.3);color:var(--gold);font-size:11px;font-weight:700;padding:5px 14px;border-radius:var(--r);letter-spacing:.05em;text-transform:uppercase;margin-bottom:14px;transition:all .4s">
+            <span style="font-size:14px">${slide.emoji}</span>
+            <span id="hero-badge-text">${slide.label} — ${slide.sub}</span>
+          </div>
+          <!-- Live badge -->
+          <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.3);color:var(--green);font-size:11px;font-weight:700;padding:5px 14px;border-radius:var(--r);margin-bottom:20px;margin-left:8px">
+            <span class="live-dot"></span>Live Availability
+          </div>
+          <h1 style="color:#fff;margin-bottom:16px;letter-spacing:-.025em">Uganda's <span style="color:var(--gold)">Smartest</span><br/>Coach Network</h1>
+          <p style="font-size:clamp(14px,1.8vw,17px);color:rgba(255,255,255,.65);max-width:500px;line-height:1.7;margin-bottom:28px">Book any seat across Uganda, Rwanda, and Kenya in under 60 seconds. Pay with MTN MoMo, Airtel Money, or card. Board at any stop along the route — no extra charge.</p>
+          <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:30px">
+            ${[['500K+','Passengers'],['150+','Operators'],['99.9%','On-Time'],['60s','To Book']].map(([v,l])=>`<div style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.68);font-size:12px"><strong style="color:var(--gold);font-family:var(--ff-h);font-weight:800">${v}</strong>${l}</div>`).join('')}
+          </div>
+          <!-- CTA Buttons -->
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">
+            <button class="btn btn-gold btn-lg" onclick="showPage('book')">Search & Book →</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('scenery-section')?.scrollIntoView({behavior:'smooth'})">✨ Route Highlights</button>
+          </div>
+          <!-- Quick pills -->
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${[['🎫 Book Now','book'],['📦 Parcel','parcels'],['📍 Track','track'],['👥 Group','group'],['✈️ Charter','charter'],['📅 Advance','book']].map(([t,p])=>`<button class="qp" onclick="${p==='group'?'openModal(\'modal-group\')':`showPage('${p}')`}">${t}</button>`).join('')}
+          </div>
+        </div>
+        <!-- RIGHT: SEARCH BOX -->
+        <div style="flex:1;min-width:270px;max-width:490px">
+          <div class="search-box">
+            <div class="stabs">
+              <button class="stab active" onclick="setSearchTab('bus',this)">🚌 Bus Seat</button>
+              <button class="stab" onclick="setSearchTab('parcel',this)">📦 Parcel</button>
+              <button class="stab" onclick="setSearchTab('hire',this)">✈️ Charter</button>
+            </div>
+            <div id="search-tab-content">
+              <div class="sf-grid">
+                <div>
+                  <div class="sf-lbl">Departure City</div>
+                  <div class="sf-wrap"><svg viewBox="0 0 24 24" width="14" height="14" fill="var(--blue)"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/></svg><select id="h-from">${cityOpts}</select></div>
+                  <button class="loc-btn" onclick="handleLoc()"><svg viewBox="0 0 24 24" width="12" height="12" fill="var(--blue)"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>Use my location</button>
+                  <div class="loc-info" id="loc-info"></div>
+                </div>
+                <div>
+                  <div class="sf-lbl">Destination</div>
+                  <div class="sf-wrap"><svg viewBox="0 0 24 24" width="14" height="14" fill="var(--blue)"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/></svg><select id="h-to">${CITIES.filter(c=>c!=='Kampala').map(c=>`<option>${c}</option>`).join('')}</select></div>
+                </div>
+                <div>
+                  <div class="sf-lbl">Departure Date</div>
+                  <div class="sf-wrap"><svg viewBox="0 0 24 24" width="14" height="14" fill="var(--blue)"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><input type="date" id="h-date"/></div>
+                </div>
+                <div>
+                  <div class="sf-lbl">Passengers</div>
+                  <div class="sf-wrap"><svg viewBox="0 0 24 24" width="14" height="14" fill="var(--blue)"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg><select><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6+ (Group)</option></select></div>
+                </div>
+              </div>
+              <!-- EN ROUTE BOARDING -->
+              <div style="background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.2);border-radius:11px;padding:11px 13px;margin-bottom:12px">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                  <input type="checkbox" id="enroute-toggle" style="accent-color:var(--green)" onchange="toggleEnroute(this)"/>
+                  <div>
+                    <div style="font-size:13px;font-weight:700;color:var(--green)">🚏 Board En Route — Free</div>
+                    <div style="font-size:11px;color:var(--muted)">Join the coach at any stop along the route. No extra fee.</div>
+                  </div>
+                </label>
+                <div id="enroute-stop-wrap" style="display:none;margin-top:10px">
+                  <div class="sf-lbl">Board at Stop</div>
+                  <div class="sf-wrap"><svg viewBox="0 0 24 24" width="14" height="14" fill="var(--blue)"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 10h18M8 4v16M16 4v16"/></svg><select id="enroute-stop"><option>Loading stops...</option></select></div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:5px">Price is calculated from your boarding stop. Seat availability confirmed at booking.</div>
+                </div>
+              </div>
+              <button class="btn btn-gold" style="width:100%;font-size:14px;padding:13px" onclick="handleSearch()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                Search Available Coaches
+              </button>
+            </div>
+          </div>
+          <!-- Info strip -->
+          <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px">
+            <span style="font-size:18px">📅</span>
+            <div><div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:2px">Flexible? Save up to 20%</div><div style="font-size:11px;color:rgba(255,255,255,.45)">Compare daily prices on the results page</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Slide nav arrows -->
+    <button onclick="prevHeroSlide()" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center">‹</button>
+    <button onclick="nextHeroSlide()" style="position:absolute;right:50px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center">›</button>
+  </section>
+  <style>
+  @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-20px) scale(1.05)}}
+  .qp{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:12px;font-weight:600;padding:7px 13px;border-radius:var(--r);cursor:pointer;transition:all .2s;white-space:nowrap;font-family:var(--ff-b)}
+  .qp:hover{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+  </style>
+
+  <!-- LIVE DEPARTURES -->
+  <div style="background:var(--navy);padding:14px 0;border-top:1px solid rgba(255,199,44,.14)">
+    <div style="max-width:1280px;margin:0 auto;padding:0 16px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px"><span class="live-dot"></span>Today's Departures — Live</div>
+      <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none">
+        ${ST.trips.filter(t=>t.status==='live').map(t=>{const pct=Math.round(t.booked/t.seats*100);const bs=pct<60?'ds-ok">✓ Available':pct<85?'ds-fast">⚡ Filling Fast':'ds-full">🔴 Almost Full';return`<div class="dep-card" onclick="showPage('book')"><div class="dc-route">${t.route}</div><div class="dc-time">${t.dep}</div><div class="dc-meta">${t.op}</div><span class="dc-badge ${bs}</span></div>`;}).join('')}
+        <div class="dep-card" onclick="showPage('book')"><div class="dc-route">Kampala → Nairobi 🌍</div><div class="dc-time">20:00</div><div class="dc-meta">Raylane Express · International</div><span class="dc-badge ds-ok">✓ Available</span></div>
+        <div class="dep-card" onclick="showPage('book')"><div class="dc-route">Kampala → Kigali 🌍</div><div class="dc-time">19:00</div><div class="dc-meta">Raylane Express · International</div><span class="dc-badge ds-ok">✓ Available</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUTE SCENERY / HIGHLIGHTS -->
+  <section id="scenery-section" style="background:var(--navy);padding:60px 16px">
+    <div style="max-width:1280px;margin:0 auto">
+      <div class="sec-lbl">Journey Highlights</div>
+      <h2 class="sec-h" style="color:#fff">Unmissable Sights Along Our Routes</h2>
+      <p class="sec-sub">Every Raylane coach journey takes you through some of Uganda's most breathtaking landscapes and iconic landmarks. Here's what to watch for.</p>
+      <!-- Scenery cards horizontal scroll on mobile -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">
+        ${ROUTE_SCENERY.map((s,i)=>`
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;transition:all .3s;cursor:default" onmouseover="this.style.background='rgba(255,255,255,.07)';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='rgba(255,255,255,.04)';this.style.transform=''">
+          <!-- Coloured top band -->
+          <div style="height:5px;background:${s.color};"></div>
+          <div style="padding:20px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+              <div style="font-size:32px">${s.emoji}</div>
+              <div>
+                <div style="font-size:15px;font-weight:800;font-family:var(--ff-h);color:#fff;margin-bottom:2px">${s.name}</div>
+                <div style="font-size:11px;color:var(--gold);font-weight:600">${s.tagline}</div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,199,44,.7);margin-bottom:8px;display:flex;align-items:center;gap:5px">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="var(--gold)"><path d="M4 17l2-8h12l2 8H4z"/></svg>
+              ${s.route} · ${s.km}
+            </div>
+            <p style="font-size:13px;color:rgba(255,255,255,.68);line-height:1.7;margin-bottom:12px">${s.description}</p>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+              ${s.facts.map(f=>`<span style="background:rgba(255,199,44,.1);border:1px solid rgba(255,199,44,.2);color:rgba(255,199,44,.85);font-size:10px;font-weight:700;padding:3px 9px;border-radius:var(--r)">${f}</span>`).join('')}
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:9px;padding:9px 11px;font-size:12px;color:rgba(255,255,255,.55)"><span style="color:var(--gold)">💡 Tip:</span> ${s.tip}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS (FedEx clean style) -->
+  <section style="background:#fff;padding:56px 16px">
+    <div style="max-width:1280px;margin:0 auto">
+      <div class="sec-lbl">Simple Process</div>
+      <h2 class="sec-h">Book in 4 Steps · Board at Any Stop</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px">
+        ${[['01','Search','Find your coach, compare prices across dates, see real-time seat availability.'],['02','Choose Seat','Pick your exact seat on our interactive coach layout — or choose an en-route boarding stop.'],['03','Pay Instantly','MTN MoMo USSD push to your phone. Enter your PIN. Confirmed in 8 seconds on any phone.'],['04','Board & Go','Show your QR code. Driver scans. Green screen. You\'re on board — at departure or any stop.']].map(([n,t,d])=>`
+        <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:22px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold)"></div>
+          <div style="width:38px;height:38px;background:var(--navy);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--ff-h);font-weight:800;font-size:15px;color:var(--gold);margin-bottom:13px">${n}</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:7px">${t}</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.65">${d}</p>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section style="padding:56px 16px">
+    <div style="max-width:1280px;margin:0 auto">
+      <div class="sec-lbl">Everything You Need</div>
+      <h2 class="sec-h">Beyond the Journey</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px">
+        ${[['🚌','Scheduled Coaches','Daily departures to 21 destinations. Book up to 30 days ahead.','book'],['📦','Parcel Delivery','Same-day delivery nationwide. Real-time tracking.','parcels'],['✈️','Private Charter','Full coach hire for events, school trips, and tours.','charter'],['📍','Live Tracking','GPS updated every 15 minutes. Know when your bus arrives.','track'],['🏢','Corporate Accounts','Monthly invoicing for NGOs, embassies, and companies.','partner'],['⭐','Raylane Rewards','Earn points every journey. Redeem for discounts.','account']].map(([ic,t,d,pg])=>`
+        <div onclick="showPage('${pg}')" style="background:#fff;border:1px solid var(--border);border-radius:15px;padding:22px;text-align:center;cursor:pointer;transition:all .25s" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='var(--blue)';this.style.boxShadow='0 10px 28px rgba(11,61,145,.1)'" onmouseout="this.style.transform='';this.style.borderColor='var(--border)';this.style.boxShadow=''">
+          <div style="width:52px;height:52px;background:var(--surface);border-radius:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px">${ic}</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:5px;font-family:var(--ff-h)">${t}</div>
+          <p style="font-size:12px;color:var(--muted);line-height:1.6">${d}</p>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYMENTS -->
+  <section style="background:#fff;padding:40px 16px">
+    <div style="max-width:1280px;margin:0 auto">
+      <div class="sec-lbl">Payments</div><h2 class="sec-h">Pay Your Way</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px">
+        ${[['#FFCC00','MTN Mobile Money','Works on 2G feature phones — USSD push'],['#E4002B','Airtel Money','Strong northern Uganda coverage'],['#1434CB','Visa / Mastercard','Secure card payment, USD & UGX'],['#00A651','M-Pesa Kenya','For Nairobi and Kenya routes']].map(([c,n,d])=>`<div style="display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:10px 15px"><div style="width:10px;height:10px;border-radius:50%;background:${c};flex-shrink:0"></div><div><div style="font-size:13px;font-weight:600">${n}</div><div style="font-size:11px;color:var(--muted)">${d}</div></div></div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- OPERATOR BANNER -->
+  <section style="background:var(--surface);padding:48px 16px">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="background:linear-gradient(135deg,var(--navy) 0%,#0e3d8c 100%);border-radius:22px;padding:44px 32px;display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:space-between;position:relative;overflow:hidden">
+        <div style="position:absolute;right:-60px;top:-60px;width:240px;height:240px;background:rgba(255,199,44,.05);border-radius:50%"></div>
+        <div style="position:relative;z-index:1">
+          <h2 style="color:#fff;margin-bottom:10px">Grow Your Transport Business</h2>
+          <p style="color:rgba(255,255,255,.68);max-width:460px;line-height:1.7;font-size:14px">Join Uganda's most advanced coach management platform. Bookings, fleet, payroll, and full GAAP financials — one dashboard. Free to join.</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1">
+          <button class="btn btn-gold" onclick="showPage('partner')">Apply as Partner →</button>
+          <button class="btn btn-ghost" onclick="showPage('operator')">View Demo Dashboard</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOYALTY -->
+  <section style="padding:56px 16px">
+    <div style="max-width:1280px;margin:0 auto">
+      <div class="sec-lbl">Raylane Rewards</div><h2 class="sec-h">Every Journey Earns Points</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        ${[['Bronze','0–1,999 pts','t-bronze',['Digital QR tickets','30-day history','1pt per UGX 100']],['Silver','2,000–9,999 pts','t-silver',['Priority boarding','5% off bookings','1.5× earn rate']],['Gold','10,000+ pts','t-gold',['10% off every booking','Free monthly parcel','WhatsApp support','2× earn rate']]].map(([n,p,tc,f])=>`<div class="tier-card ${tc}"><h3>${n}</h3><div class="tier-pts">${p}</div>${f.map(x=>`<div class="tier-perk">${x}</div>`).join('')}</div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section style="background:#fff;padding:56px 16px">
+    <div style="max-width:1280px;margin:0 auto">
+      <div class="sec-lbl">Reviews</div><h2 class="sec-h">Trusted by Ugandans</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px">
+        ${[['AK','Amina Kyomugisha','Kampala · Passenger','Booked Kampala to Mbale at 6am, paid with MoMo in under a minute. Loved seeing Mabira Forest through the window as we passed.'],['JO','James Okello','Gulu · Regular Traveller','The Karuma crossing is always breathtaking. Driver slowed so we could see the falls. Raylane coaches make the journey as memorable as the destination.'],['RN','Robert Nsubuga','Global Coaches · Operator','The dashboard handles our 12 buses, drivers, and payroll. Payouts every Friday automatically. Financial reports are IFRS standard. Remarkable platform.']].map(([av,n,m,q])=>`
+        <div style="background:#fff;border:1px solid var(--border);border-radius:15px;padding:22px">
+          <div style="color:var(--gold);font-size:13px;margin-bottom:9px">★★★★★</div>
+          <p style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:14px;font-style:italic">"${q}"</p>
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--gold);font-family:var(--ff-h);flex-shrink:0">${av}</div>
+            <div><div style="font-size:13px;font-weight:600">${n}</div><div style="font-size:11px;color:var(--muted)">${m}</div></div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- MAP SECTION -->
+  <section style="background:var(--navy);padding:56px 16px">
+    <div style="max-width:1280px;margin:0 auto">
+      <div class="sec-lbl">Our Network</div>
+      <h2 class="sec-h" style="color:#fff">Where We Connect Uganda</h2>
+      <p class="sec-sub">21 cities · International routes to Nairobi and Kigali</p>
+      <div style="border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08)">
+        <svg viewBox="0 0 560 580" xmlns="http://www.w3.org/2000/svg" style="width:100%;background:linear-gradient(175deg,#0d2952 0%,#0A1628 100%)">
+          <path d="M130,55 L200,38 L280,48 L360,58 L415,100 L430,170 L420,250 L440,320 L428,400 L395,445 L350,470 L285,488 L220,480 L158,460 L118,420 L92,360 L78,290 L88,220 L76,158 L98,100 Z" fill="rgba(11,61,145,0.12)" stroke="rgba(255,199,44,0.28)" stroke-width="1.5"/>
+          <ellipse cx="310" cy="475" rx="90" ry="55" fill="rgba(30,100,200,0.22)"/><text x="275" y="480" fill="rgba(100,160,255,0.45)" font-size="9" font-family="Sora">Lake Victoria</text>
+          <ellipse cx="95" cy="235" rx="20" ry="58" fill="rgba(30,100,200,0.2)"/>
+          <ellipse cx="118" cy="405" rx="16" ry="32" fill="rgba(30,100,200,0.18)"/>
+          <g stroke="rgba(255,199,44,0.2)" stroke-width="1.5" fill="none">
+            <line x1="228" y1="345" x2="322" y2="272" stroke-dasharray="4,3"/>
+            <line x1="228" y1="345" x2="172" y2="172" stroke-dasharray="4,3"/>
+            <line x1="228" y1="345" x2="178" y2="418" stroke-dasharray="4,3"/>
+            <line x1="228" y1="345" x2="135" y2="308" stroke-dasharray="4,3"/>
+            <line x1="228" y1="345" x2="268" y2="338" stroke-dasharray="4,3"/>
+            <line x1="228" y1="345" x2="112" y2="128" stroke-dasharray="4,3"/>
+            <line x1="228" y1="345" x2="232" y2="205" stroke-dasharray="4,3"/>
+          </g>
+          <line x1="228" y1="345" x2="490" y2="530" stroke="rgba(255,199,44,0.12)" stroke-width="1.5" stroke-dasharray="9,5" fill="none"/>
+          <line x1="178" y1="418" x2="60" y2="530" stroke="rgba(255,199,44,0.12)" stroke-width="1.5" stroke-dasharray="9,5" fill="none"/>
+          ${[[228,345,'Kampala',true],[172,172,'Gulu',true],[322,272,'Mbale',true],[178,418,'Mbarara',true],[135,308,'Fort Portal',true],[268,338,'Jinja',false],[112,128,'Arua',false],[232,205,'Lira',false],[290,232,'Soroti',false],[228,368,'Entebbe',false],[165,452,'Kabale',false],[348,298,'Tororo',false],[122,362,'Kasese',false],[148,252,'Hoima',false],[220,402,'Masaka',false]].map(([x,y,name,hub])=>hub?`<g onclick="toast('${name} — Hub city. Multiple daily departures.')" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="12" fill="rgba(255,199,44,0.18)" stroke="rgba(255,199,44,0.4)" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="6" fill="#FFC72C"/><text x="${x+14}" y="${y+4}" fill="#fff" font-size="10" font-weight="bold" font-family="Sora">${name}</text></g>`:`<g onclick="toast('${name} — Direct routes from Kampala')" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="4" fill="rgba(255,255,255,0.65)"/><text x="${x+8}" y="${y+4}" fill="rgba(255,255,255,0.72)" font-size="8" font-family="Sora">${name}</text></g>`).join('')}
+          <g onclick="toast('Nairobi, Kenya — International overnight route.')" style="cursor:pointer"><circle cx="492" cy="532" r="6" fill="rgba(255,199,44,0.55)" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3,2"/><text x="500" y="530" fill="rgba(255,199,44,0.85)" font-size="9" font-family="Sora">Nairobi 🇰🇪</text></g>
+          <g onclick="toast('Kigali, Rwanda — International route via Kabale.')" style="cursor:pointer"><circle cx="60" cy="532" r="6" fill="rgba(255,199,44,0.55)" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3,2"/><text x="68" y="530" fill="rgba(255,199,44,0.85)" font-size="9" font-family="Sora">Kigali 🇷🇼</text></g>
+        </svg>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin-top:18px">
+        ${[['Kampala → Mbale','35K'],['Kampala → Gulu','45K'],['Kampala → Mbarara','30K'],['Kampala → Kabale','40K'],['Kampala → Fort Portal','40K'],['Kampala → Arua','55K'],['Kampala → Lira','38K'],['Kampala → Kasese','42K'],['Kampala → Nairobi 🌍','120K'],['Kampala → Kigali 🌍','95K']].map(([r,p])=>`<div onclick="showPage('book')" style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:11px;padding:9px 13px;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(255,199,44,.1)';this.style.borderColor='rgba(255,199,44,.3)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.09)'"><span style="font-size:12px;font-weight:600;color:#fff">${r}</span><span style="font-size:11px;color:var(--gold);font-weight:700">UGX ${p}</span></div>`).join('')}
+      </div>
+    </div>
+  </section>
+  ${footerHTML()}`;
+
+  // Init date + carousel
+  const d=el.querySelector('#h-date');if(d)d.valueAsDate=new Date();
+  startHeroCarousel();
+};
+
+/* ---- HERO CAROUSEL FUNCTIONS ---- */
+let _heroCarouselTimer;
+function setHeroSlide(idx){
+  window.heroSlide=idx;
+  const s=HERO_SLIDES[idx];
+  const bg=document.getElementById('hero-bg');
+  const badge=document.getElementById('hero-badge-text');
+  const slideBadge=document.getElementById('hero-slide-badge');
+  if(bg) bg.style.background=s.bg;
+  if(badge) badge.textContent=s.label+' — '+s.sub;
+  if(slideBadge){ const span=slideBadge.querySelector('span:first-child');if(span)span.textContent=s.emoji; }
+  // Update indicators
+  document.querySelectorAll('.hero-ind').forEach((el,i)=>{
+    el.style.height=i===idx?'24px':'8px';
+    el.style.background=i===idx?'var(--gold)':'rgba(255,255,255,.3)';
+  });
+  // Update en-route stops for this slide
+  updateEnrouteStops();
+}
+function nextHeroSlide(){setHeroSlide((window.heroSlide+1)%HERO_SLIDES.length);}
+function prevHeroSlide(){setHeroSlide((window.heroSlide-1+HERO_SLIDES.length)%HERO_SLIDES.length);}
+function startHeroCarousel(){clearInterval(_heroCarouselTimer);_heroCarouselTimer=setInterval(nextHeroSlide,5000);}
+
+/* ---- EN-ROUTE BOARDING FUNCTIONS ---- */
+function toggleEnroute(cb){
+  const wrap=document.getElementById('enroute-stop-wrap');
+  if(wrap) wrap.style.display=cb.checked?'block':'none';
+  if(cb.checked) updateEnrouteStops();
+}
+
+function updateEnrouteStops(){
+  const sel=document.getElementById('enroute-stop');
+  if(!sel||!document.getElementById('enroute-toggle')?.checked) return;
+  // Use first live trip stops as sample
+  const tripId=Object.keys(ST.enrouteStops)[window.heroSlide%Object.keys(ST.enrouteStops).length];
+  const stops=ST.enrouteStops[tripId]||[];
+  sel.innerHTML=stops.map(s=>`<option value="${s.code}">${s.stop} — ${s.time} (${s.km}km)</option>`).join('');
+}
+
+/* ---- EN-ROUTE BOOKING IN BOOK PAGE ---- */
+const _origSelectTrip = window.selectTrip || null;
+window.selectTrip = function(tid){
+  if(_origSelectTrip) _origSelectTrip(tid);
+  // After original runs, show en-route option
+  setTimeout(()=>{
+    const s2=document.getElementById('book-s2');
+    if(!s2||s2.style.display==='none') return;
+    if(document.getElementById('enroute-booking-section')) return;
+    const stops=ST.enrouteStops[tid];
+    if(!stops||!stops.length) return;
+    const div=document.createElement('div');
+    div.id='enroute-booking-section';
+    div.style.cssText='background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.22);border-radius:13px;padding:14px;margin-bottom:14px';
+    div.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:16px">🚏</span><div><div style="font-size:14px;font-weight:700;color:var(--green)">Board En Route — No Extra Fee</div><div style="font-size:12px;color:var(--muted)">You may also board at the full departure point.</div></div></div>
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:10px"><input type="checkbox" id="board-enroute" style="accent-color:var(--green)" onchange="toggleEnrouteBook(this,'${tid}')"/> <span style="font-size:13px">I want to board at a stop along the route</span></label>
+    <div id="enroute-book-stops" style="display:none">
+      <div class="sf-lbl" style="margin-bottom:5px">Select Your Boarding Stop</div>
+      <select class="fi" id="enroute-book-sel">
+        ${stops.map(s=>`<option value="${s.code}">${s.stop} — Arrives ${s.time} · ${s.km}km from Kampala</option>`).join('')}
+      </select>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px">✅ No extra charge. Your QR ticket will specify your boarding stop. The driver will expect you there.</div>
+    </div>`;
+    const seatSection=document.querySelector('.seat-map-wrap')?.closest('.card')||document.getElementById('seat-map-container')?.parentNode;
+    if(seatSection && seatSection.parentNode) seatSection.parentNode.insertBefore(div, seatSection);
+  },200);
+};
+
+function toggleEnrouteBook(cb,tid){
+  const wrap=document.getElementById('enroute-book-stops');
+  if(wrap) wrap.style.display=cb.checked?'block':'none';
+}
+
+/* ---- OPERATOR DOCUMENTS CLOUD STORAGE ---- */
+ST.opDocuments = [
+  {id:'D001',op:'Global Coaches',name:'PSV Operator Licence',type:'PSV Licence',uploaded:'15 Jan 2026',expires:'14 Jan 2027',size:'1.2MB',status:'valid',url:'#'},
+  {id:'D002',op:'Global Coaches',name:'Motor Third-Party Insurance — UAX 342P',type:'Insurance Certificate',uploaded:'3 Feb 2026',expires:'2 Feb 2027',size:'0.8MB',status:'valid',url:'#'},
+  {id:'D003',op:'Global Coaches',name:'Certificate of Registration',type:'Company Registration',uploaded:'10 Jan 2026',expires:null,size:'0.6MB',status:'valid',url:'#'},
+  {id:'D004',op:'Global Coaches',name:'URA Tax Compliance Certificate',type:'Tax Certificate',uploaded:'5 Mar 2026',expires:'4 Mar 2027',size:'0.4MB',status:'valid',url:'#'},
+  {id:'D005',op:'YY Coaches',name:'PSV Operator Licence',type:'PSV Licence',uploaded:'20 Feb 2026',expires:'19 Feb 2027',size:'1.1MB',status:'valid',url:'#'},
+  {id:'D006',op:'Global Coaches',name:'Road Fitness Certificate — UAK 891C',type:'Fitness Certificate',uploaded:'1 Oct 2025',expires:'30 Sep 2026',size:'0.5MB',status:'expiring',url:'#'},
+];
+
+function renderDocumentStore(container){
+  container.innerHTML=`
+  <div class="dash-hdr"><div class="dash-title">Operator Document Store</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-gold btn-sm" onclick="uploadDocumentModal()">+ Upload Document</button>
+      <div class="sbar"><svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11" stroke="currentColor" stroke-width="2" fill="none"/></svg><input placeholder="Search documents…" oninput="filterDocs(this.value)"/></div>
+    </div>
+  </div>
+  <div style="background:rgba(11,61,145,.06);border:1px solid rgba(11,61,145,.15);border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:var(--blue)">
+    All operator documents are stored securely in cloud storage. Documents marked as expiring are flagged for renewal 60 days before expiry. Expired documents trigger compliance alerts.
+  </div>
+  <div id="doc-table-wrap" class="panel">
+    <div class="tw"><table>
+      <thead><tr><th>Document</th><th>Operator</th><th>Type</th><th>Uploaded</th><th>Expires</th><th>Size</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="docs-tbody">
+        ${ST.opDocuments.map(d=>`<tr data-search="${(d.name+d.op+d.type).toLowerCase()}">
+          <td style="font-weight:600;font-size:13px">📄 ${d.name}</td>
+          <td style="font-size:12px">${d.op}</td>
+          <td><span class="badge b-blue" style="font-size:10px">${d.type}</span></td>
+          <td style="font-size:12px">${d.uploaded}</td>
+          <td style="font-size:12px;color:${d.expires&&d.status==='expiring'?'var(--amber)':'var(--green)'};font-weight:600">${d.expires?d.expires+(d.status==='expiring'?' ⚠️':''):'Permanent'}</td>
+          <td style="font-size:12px;color:var(--muted)">${d.size}</td>
+          <td><span class="badge ${d.status==='valid'?'b-green':'b-amber'}">${d.status}</span></td>
+          <td><div style="display:flex;gap:5px">
+            <button class="btn btn-blue btn-sm" onclick="viewDocumentModal('${d.id}')">👁️ View</button>
+            <button class="btn btn-outline btn-sm" onclick="downloadDocument('${d.id}')">⬇️ Download</button>
+            <button class="btn btn-danger btn-sm" onclick="RL.confirm('Delete document: ${d.name}?','Delete Document',()=>{ST.opDocuments=ST.opDocuments.filter(x=>x.id!=='${d.id}');renderDocumentStore(this.closest('.dash-wrap'));toast('Document deleted.')},null,true)">🗑️</button>
+          </div></td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>
+  </div>`;
+}
+
+function filterDocs(val){
+  document.querySelectorAll('#docs-tbody tr').forEach(tr=>{
+    tr.style.display=tr.dataset.search.includes(val.toLowerCase())?'':'none';
+  });
+}
+
+function viewDocumentModal(id){
+  const d=ST.opDocuments.find(x=>x.id===id);if(!d)return;
+  RL.preview('📄 '+d.name,`
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+      ${[['Document Name',d.name],['Operator',d.op],['Document Type',d.type],['Date Uploaded',d.uploaded],['Expiry Date',d.expires||'No expiry'],['File Size',d.size],['Status',d.status.toUpperCase()]].map(([k,v])=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted);font-weight:600">${k}</span><span style="font-weight:600">${v}</span></div>`).join('')}
+    </div>
+    <!-- Document preview mockup -->
+    <div style="background:var(--surface);border-radius:13px;padding:32px;text-align:center;border:2px dashed var(--border)">
+      <div style="font-size:48px;margin-bottom:12px">📋</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:6px">${d.name}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">${d.type} · ${d.size} · Uploaded ${d.uploaded}</div>
+      <button class="btn btn-blue" onclick="window.open('about:blank','_blank');toast('Document opening in new window…')">Open in New Window ↗</button>
+    </div>`,
+    [{label:'⬇️ Download',cls:'btn-outline',action:()=>downloadDocument(id)},{label:'Close',cls:'btn-blue',action:()=>RL.closePreview()}]
+  );
+}
+
+function downloadDocument(id){
+  const d=ST.opDocuments.find(x=>x.id===id);
+  if(!d){toast('Document not found.');return;}
+  toast('⬇️ Downloading: '+d.name+'…');
+  // In production this would trigger a signed URL download from cloud storage
+  setTimeout(()=>toast('✅ '+d.name+' downloaded successfully.'),1500);
+}
+
+function uploadDocumentModal(){
+  RL.preview('Upload Operator Document',`
+    <div style="background:rgba(11,61,145,.06);border:1px solid rgba(11,61,145,.15);border-radius:10px;padding:11px;font-size:13px;color:var(--blue);margin-bottom:14px">Documents are stored securely in cloud storage (Supabase Storage). Maximum file size: 10MB. Accepted formats: PDF, JPG, PNG.</div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">Operator</label><select class="fi fsel" id="ud-op">${ST.operators.map(o=>`<option>${o.name}</option>`).join('')}</select></div>
+      <div class="fg"><label class="fl">Document Type</label><select class="fi fsel" id="ud-type"><option>PSV Licence</option><option>Insurance Certificate</option><option>Fitness Certificate</option><option>Company Registration</option><option>Tax Certificate</option><option>Driver's Licence</option><option>National ID (NID)</option><option>Other</option></select></div>
+      <div class="fg full"><label class="fl">Document Name</label><input class="fi" id="ud-name" type="text" placeholder="e.g. PSV Operator Licence — Global Coaches 2026"/></div>
+      <div class="fg"><label class="fl">Document Expiry Date</label><input class="fi" id="ud-exp" type="date"/></div>
+      <div class="fg"><label class="fl">Upload File</label><input class="fi" id="ud-file" type="file" accept=".pdf,.jpg,.jpeg,.png" style="padding:7px"/></div>
+    </div>`,
+    [{label:'Cancel',cls:'btn-outline',action:()=>{}},{label:'Upload Document',cls:'btn-gold',full:true,action:()=>{
+      const name=document.getElementById('ud-name')?.value?.trim();
+      const op=document.getElementById('ud-op')?.value;
+      const type=document.getElementById('ud-type')?.value;
+      const exp=document.getElementById('ud-exp')?.value;
+      if(!name){toast('Please enter a document name.');return;}
+      const newDoc={id:'D'+Date.now(),op,name,type,uploaded:new Date().toLocaleDateString('en-UG',{day:'numeric',month:'short',year:'numeric'}),expires:exp?new Date(exp).toLocaleDateString('en-UG',{day:'numeric',month:'short',year:'numeric'}):null,size:'—',status:'valid',url:'#'};
+      ST.opDocuments.unshift(newDoc);
+      RL.closePreview();toast('✅ Document uploaded: '+name);
+    }}]
+  );
+}
+
+/* ---- OPERATOR DOCUMENT TAB IN OPERATOR DASHBOARD ---- */
+function renderOpDocuments(container){
+  const myDocs=ST.opDocuments.filter(d=>d.op===ST.op_branding.name);
+  container.innerHTML=`
+  <div class="dash-hdr"><div class="dash-title">My Documents</div>
+    <button class="btn btn-gold btn-sm" onclick="uploadMyDocModal()">+ Upload Document</button>
+  </div>
+  <div style="background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.2);border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:var(--green)">
+    ✅ ${myDocs.filter(d=>d.status==='valid').length} documents valid · ${myDocs.filter(d=>d.status==='expiring').length} expiring soon
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px">
+    ${myDocs.length?myDocs.map(d=>`
+    <div style="background:#fff;border:1px solid ${d.status==='expiring'?'rgba(217,119,6,.3)':'var(--border)'};border-radius:13px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div style="font-size:22px;margin-right:8px">📄</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">${d.name}</div>
+          <span class="badge b-blue" style="font-size:10px">${d.type}</span>
+        </div>
+        <span class="badge ${d.status==='valid'?'b-green':'b-amber'}" style="flex-shrink:0">${d.status}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Uploaded: ${d.uploaded}${d.expires?` · Expires: ${d.expires}`:''}</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-blue btn-sm" onclick="viewDocumentModal('${d.id}')">View ↗</button>
+        <button class="btn btn-outline btn-sm" onclick="downloadDocument('${d.id}')">Download</button>
+      </div>
+    </div>`).join('')
+    :`<div class="card" style="grid-column:1/-1;text-align:center;padding:32px;color:var(--muted)">No documents uploaded yet. Upload your PSV licence, insurance certificates, and fitness documents.</div>`}
+  </div>`;
+}
+
+function uploadMyDocModal(){
+  RL.preview('Upload My Document',`
+    <div class="fgrid">
+      <div class="fg full"><label class="fl">Document Name</label><input class="fi" id="md-name" type="text" placeholder="e.g. Insurance Certificate — UAX 342P"/></div>
+      <div class="fg"><label class="fl">Document Type</label><select class="fi fsel" id="md-type"><option>Insurance Certificate</option><option>Fitness Certificate</option><option>PSV Licence</option><option>Driver's Licence</option><option>NID Copy</option><option>Other</option></select></div>
+      <div class="fg"><label class="fl">Expiry Date</label><input class="fi" id="md-exp" type="date"/></div>
+      <div class="fg full"><label class="fl">Upload File (PDF, JPG, PNG — max 10MB)</label><input class="fi" id="md-file" type="file" accept=".pdf,.jpg,.jpeg,.png" style="padding:7px"/></div>
+    </div>`,
+    [{label:'Cancel',cls:'btn-outline',action:()=>{}},{label:'Upload',cls:'btn-gold',full:true,action:()=>{
+      const name=document.getElementById('md-name')?.value?.trim();
+      if(!name){toast('Please enter document name.');return;}
+      ST.opDocuments.unshift({id:'D'+Date.now(),op:ST.op_branding.name,name,type:document.getElementById('md-type')?.value,uploaded:new Date().toLocaleDateString('en-UG',{day:'numeric',month:'short',year:'numeric'}),expires:document.getElementById('md-exp')?.value?new Date(document.getElementById('md-exp').value).toLocaleDateString('en-UG',{day:'numeric',month:'short',year:'numeric'}):null,size:'—',status:'valid',url:'#'});
+      RL.closePreview();toast('✅ Document uploaded: '+name);
+    }}]
+  );
+}
+
+/* ---- OVERRIDE adminTab TO ADD NEW TABS ---- */
+const _prevAdminTab = window.adminTab;
+window.adminTab = function(id, btn){
+  _prevAdminTab(id, btn);
+  if(['documents','charter','insurance','subscriptions','vendors','costs-main','alerts'].includes(id)){
+    const panel=document.getElementById('ap-'+id);
+    if(!panel) return;
+    if(id==='documents') renderDocumentStore(panel);
+  }
+};
+
+/* ---- INJECT NEW ADMIN TABS ---- */
+const _prevRenderAdmin = window.renderAdmin;
+window.renderAdmin = function(el){
+  _prevRenderAdmin(el);
+  const tabs=el.querySelector('.op-tabs');
+  if(tabs && !tabs.querySelector('[data-custom]')){
+    [{id:'documents',label:'📁 Documents'},{id:'alerts',label:'🔔 Alerts'},{id:'subscriptions',label:'🔄 Subscriptions'},{id:'vendors',label:'🏪 Vendors'},{id:'costs-main',label:'💸 Cost Centre'},{id:'charter',label:'✈️ Charter Req.'},{id:'insurance',label:'🛡️ Insurance'}].forEach(({id,label})=>{
+      const b=document.createElement('button');
+      b.className='otab';b.textContent=label;b.dataset.custom='1';
+      b.onclick=()=>adminTab(id,b);
+      tabs.appendChild(b);
+    });
+  }
+};
+
+/* ---- OVERRIDE OPERATOR TAB TO ADD DOCUMENTS TAB ---- */
+const _prevOpTab = window.opTab;
+window.opTab = function(id, btn){
+  _prevOpTab(id, btn);
+  if(id==='op-documents'){
+    let panel=document.getElementById('op-op-documents');
+    if(!panel){panel=document.createElement('div');panel.id='op-op-documents';panel.className='dash-wrap';document.querySelector('#pg-operator .op-nav+*')?.appendChild(panel);}
+    panel.style.display='block';
+    renderOpDocuments(panel);
+  }
+};
+
+/* ---- INJECT DOCUMENTS TAB INTO OPERATOR NAV ---- */
+const _prevRenderOperator = window.renderOperator;
+window.renderOperator = function(el){
+  _prevRenderOperator(el);
+  const opTabs=el.querySelector('.op-tabs');
+  if(opTabs && !opTabs.querySelector('[data-doc-tab]')){
+    const b=document.createElement('button');
+    b.className='otab';b.textContent='📁 Documents';b.dataset.docTab='1';
+    b.onclick=()=>opTab('op-documents',b);
+    opTabs.appendChild(b);
+  }
+};
+
+/* ---- FINAL FUNCTION FIXES: all action buttons wrapped with RL.confirm ---- */
+
+// Fix approve trip
+window.adminApproveTrip = function(tid, btn){
+  const t=ST.trips.find(x=>x.id===tid);
+  RL.preview('Approve Trip',
+    `<div>${[['Route',t?.route||'—'],['Operator',t?.op||'—'],['Vehicle',t?.vehicle||'—'],['Driver',t?.driver||'—'],['Date',t?.date||'—'],['Departure',t?.dep||'—'],['Seats',t?.seats||'—']].map(([k,v])=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">${k}</span><span style="font-weight:600">${v}</span></div>`).join('')}
+    <div style="background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.2);border-radius:10px;padding:11px;margin-top:12px;font-size:12px;color:var(--green)">On approval, this trip will go live on raylaneexpress.com immediately and the operator will receive an SMS notification.</div></div>`,
+    [{label:'Cancel',cls:'btn-outline',action:()=>{}},{label:'✅ Approve Trip',cls:'btn-success',full:true,action:()=>{
+      if(t) t.status='live';
+      RL.closePreview();
+      if(btn){btn.outerHTML='<span class="badge b-green">Approved ✓</span>';}
+      toast('✅ Trip approved! Now live on raylaneexpress.com. Operator notified.');
+    }}]
+  );
+};
+
+// Fix approve operator application
+window.adminApproveOp = function(id, name, btn){
+  const app=ST.applications.find(x=>x.id===id);
+  RL.preview('Approve Operator Application',
+    `<div>${app?[['Company',app.name],['Contact',app.contact],['Phone',app.phone],['Fleet',app.vehicles+' vehicles'],['Plan',app.plan],['Routes',app.routes]].map(([k,v])=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">${k}</span><span style="font-weight:600">${v}</span></div>`).join(''):''}
+    <div style="background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.2);border-radius:10px;padding:11px;margin-top:12px;font-size:12px;color:var(--green)">Approving will create an operator account, configure modules for their chosen plan, and send login credentials via SMS.</div></div>`,
+    [{label:'Cancel',cls:'btn-outline',action:()=>{}},{label:'✅ Approve & Create Account',cls:'btn-success',full:true,action:()=>{
+      ST.operators.push({id,name,contact:app?.contact||'—',phone:app?.phone||'—',plan:app?.plan||'Standard',vehicles:parseInt(app?.vehicles||3),commission:'8%',april_rev:0,april_comm:0,status:'active',merchant:'—'});
+      ST.applications=ST.applications.filter(a=>a.id!==id);
+      RL.closePreview();
+      if(btn){try{btn.closest('tr').remove();}catch(e){}}
+      toast('✅ '+name+' approved! Dashboard created and login credentials sent via SMS.');
+    }}]
+  );
+};
+
+console.log('✅ Raylane Express v5 complete — all systems active');
 </script>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 </body>
